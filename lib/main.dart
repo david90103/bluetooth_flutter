@@ -2,7 +2,7 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'bluetooth/main.dart';
-import 'home_page.dart';
+import 'home.dart';
 import 'login.dart';
 
 void main() => runApp(MyApp());
