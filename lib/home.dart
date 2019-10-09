@@ -233,7 +233,7 @@ class HomePage extends StatelessWidget {
           ListTile(
             title: Text('裝置連接'),
             onTap: () {
-              // Update the state of the app.
+              Navigator.pushNamed(context, '/settings/bluetooth');
             },
           ),
           ListTile(
@@ -251,7 +251,7 @@ class HomePage extends StatelessWidget {
           ListTile(
             title: Text('詳細資訊'),
             onTap: () {
-              // Update the state of the app.
+              Navigator.pushNamed(context, '/details');
             },
           ),
         ],
