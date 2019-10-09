@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget row1 = Padding(
-      padding: EdgeInsets.symmetric(vertical: 15.0),
+      padding: EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -82,7 +82,7 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: new Container(
               margin: EdgeInsets.only(right: 5.0),
-              padding: EdgeInsets.symmetric(vertical: 10.0),
+              padding: EdgeInsets.only(top: 20.0),
               alignment: Alignment.center,
               decoration: new BoxDecoration(
                 color: Colors.white,
@@ -110,7 +110,7 @@ class HomePage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(bottom: 5.0, left: 5.0),
+                  margin: EdgeInsets.only(bottom: 10.0, left: 10.0),
                   padding: EdgeInsets.symmetric(vertical: 25.0),
                   alignment: Alignment.center,
                   decoration: new BoxDecoration(
@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 5.0, left: 5.0),
+                  margin: EdgeInsets.only(top: 10.0, left: 10.0),
                   padding: EdgeInsets.symmetric(vertical: 25.0),
                   alignment: Alignment.center,
                   decoration: new BoxDecoration(
@@ -206,7 +206,7 @@ class HomePage extends StatelessWidget {
       padding: EdgeInsets.all(15),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: Colors.grey[200],
       ),
       child: ListView(
         children: <Widget>[row1, row2, row3],
@@ -221,18 +221,35 @@ class HomePage extends StatelessWidget {
           DrawerHeader(
             child: Text('Drawer Header'),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.orangeAccent,
             ),
           ),
           ListTile(
-            title: Text('Item 1'),
+            title: Text('首頁'),
             onTap: () {
               // Update the state of the app.
-              // ...
             },
           ),
           ListTile(
-            title: Text('Item 2'),
+            title: Text('裝置連接'),
+            onTap: () {
+              // Update the state of the app.
+            },
+          ),
+          ListTile(
+            title: Text('歷史紀錄'),
+            onTap: () {
+              // Update the state of the app.
+            },
+          ),
+          ListTile(
+            title: Text('設定'),
+            onTap: () {
+              // Update the state of the app.
+            },
+          ),
+          ListTile(
+            title: Text('詳細資訊'),
             onTap: () {
               // Update the state of the app.
             },
