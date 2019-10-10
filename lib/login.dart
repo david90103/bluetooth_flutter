@@ -8,16 +8,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool wife = false;
+
   @override
   Widget build(BuildContext context) {
     final logo = Hero(
-      tag: 'hero',
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 48.0,
-        child: Image.asset('assets/logo.png'),
-      ),
-    );
+        tag: 'hero',
+        child: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 48.0,
+          child: FlatButton(
+              child: Image.asset(
+                (this.wife ? 'assets/logo.png' : 'assets/logo.gif'),
+              ),
+              onPressed: () {
+                setState(() {
+                  this.wife = !wife;
+                });
+              }),
+        ));
 
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,

@@ -1,5 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'common/drawer.dart';
 
 class LinearSales {
   final int year;
@@ -33,7 +34,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget row1 = Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -161,7 +162,7 @@ class HomePage extends StatelessWidget {
     );
 
     Widget row3 = Padding(
-      padding: EdgeInsets.symmetric(vertical: 15.0),
+      padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -213,58 +214,13 @@ class HomePage extends StatelessWidget {
       ),
     );
 
-    Widget drawer = Drawer(
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Text('Drawer Header'),
-            decoration: BoxDecoration(
-              color: Colors.orangeAccent,
-            ),
-          ),
-          ListTile(
-            title: Text('首頁'),
-            onTap: () {
-              // Update the state of the app.
-            },
-          ),
-          ListTile(
-            title: Text('裝置連接'),
-            onTap: () {
-              Navigator.pushNamed(context, '/settings/bluetooth');
-            },
-          ),
-          ListTile(
-            title: Text('歷史紀錄'),
-            onTap: () {
-              // Update the state of the app.
-            },
-          ),
-          ListTile(
-            title: Text('設定'),
-            onTap: () {
-              // Update the state of the app.
-            },
-          ),
-          ListTile(
-            title: Text('詳細資訊'),
-            onTap: () {
-              Navigator.pushNamed(context, '/details');
-            },
-          ),
-        ],
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text('睡眠呼吸檢測數據', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
       ),
-      drawer: drawer,
+      drawer: MainDrawer(),
       body: body,
     );
   }
