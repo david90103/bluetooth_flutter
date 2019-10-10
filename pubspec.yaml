@@ -31,6 +31,7 @@ dependencies:
   sqflite: ^1.1.6
   font_awesome_flutter: ^8.5.0
   intl: ^0.16.0
+  flutter_spinkit: ^4.0.0
   # flutter_blue: ^0.6.2
 
 dev_dependencies:

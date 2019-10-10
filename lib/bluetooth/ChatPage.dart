@@ -86,7 +86,7 @@ class _ChatPage extends State<ChatPage> {
       connection = null;
     }
 
-    this.database.close();
+    database.close();
 
     super.dispose();
   }
@@ -208,7 +208,7 @@ class _ChatPage extends State<ChatPage> {
   void _saveRecord(data) async {
     List values = data.split(',');
 
-    print(await database.rawQuery('select * from Beat'));
+    print(await database.rawQuery('select * from Oxygen'));
 
     int now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
