@@ -26,7 +26,7 @@ class DetailsPage extends StatelessWidget {
               ),
             ),
             Text('🛠\n'),
-            Text('Version 0.0.2'),
+            Text('Version 0.0.3'),
             Text('Author: David Tsai'),
           ],
         ),
