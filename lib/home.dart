@@ -270,6 +270,10 @@ class HomePageState extends State<HomePage> {
                 onPressed: () {
                   setState(() {
                     recording = !recording;
+                    if (!recording) {
+                      //完成後切換到歷史紀錄頁面
+                      Navigator.pushNamed(context, '/history');
+                    }
                   });
                 },
                 padding: EdgeInsets.symmetric(vertical: 13.0, horizontal: 50.0),

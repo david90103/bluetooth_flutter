@@ -14,7 +14,10 @@ class DetailsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text('☎️\n'),
+            Padding(
+              padding: EdgeInsets.all(30),
+              child: Image.asset('assets/ahi_info.png'),
+            ),
             Text('聯絡資訊: 臺中榮民總醫院胸腔內科', style: TextStyle(fontSize: 18)),
             Text('聯絡電話: 04-2359-2525', style: TextStyle(fontSize: 18)),
             SizedBox(
