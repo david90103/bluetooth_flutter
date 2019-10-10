@@ -153,7 +153,12 @@ class _MainPage extends State<MainPage> {
             ),
             ListTile(
               title: RaisedButton(
-                child: const Text('連接藍芽裝置'),
+                color: Colors.orangeAccent,
+                child: const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text('連接藍芽裝置',
+                      style: TextStyle(color: Colors.white, fontSize: 16)),
+                ),
                 onPressed: () async {
                   final BluetoothDevice selectedDevice =
                       await Navigator.of(context)

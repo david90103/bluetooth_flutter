@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
+import 'package:sqflite/sqflite.dart';
+
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
 
@@ -37,9 +39,13 @@ class _ChatPage extends State<ChatPage> {
 
   bool isDisconnecting = false;
 
+  Database database;
+
   @override
   void initState() {
     super.initState();
+
+    _initDatabase();
 
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
@@ -79,6 +85,8 @@ class _ChatPage extends State<ChatPage> {
       connection.dispose();
       connection = null;
     }
+
+    this.database.close();
 
     super.dispose();
   }
@@ -156,7 +164,69 @@ class _ChatPage extends State<ChatPage> {
         ])));
   }
 
-  void _onDataReceived(Uint8List data) {
+  void _initDatabase() async {
+    // Get a location using getDatabasesPath
+    var databasesPath = await getDatabasesPath();
+    String path = databasesPath + '/sqflite.db';
+
+    // open the database
+    database = await openDatabase(path, version: 1);
+
+    var beat = await database.rawQuery(
+        'SELECT name FROM sqlite_master WHERE type="table" AND name="Beat"');
+    var oxygen = await database.rawQuery(
+        'SELECT name FROM sqlite_master WHERE type="table" AND name="Oxygen"');
+    var breathe = await database.rawQuery(
+        'SELECT name FROM sqlite_master WHERE type="table" AND name="Breathe"');
+    var risk = await database.rawQuery(
+        'SELECT name FROM sqlite_master WHERE type="table" AND name="Risk"');
+
+    if (beat.isEmpty) {
+      await database.execute(
+          'CREATE TABLE Beat (id INTEGER PRIMARY KEY, user CHAR(40), datetime INTEGER, value FLOAT)');
+    }
+    if (oxygen.isEmpty) {
+      await database.execute(
+          'CREATE TABLE Oxygen (id INTEGER PRIMARY KEY, user CHAR(40), datetime INTEGER, value INTEGER)');
+    }
+    if (breathe.isEmpty) {
+      String valueSubquery = '';
+      for (int i = 1; i <= 16; i++) {
+        valueSubquery += ', value' + i.toString() + ' FLOAT';
+      }
+      await database.execute(
+          'CREATE TABLE Breathe (id INTEGER PRIMARY KEY, user CHAR(40), datetime INTEGER' +
+              valueSubquery +
+              ')');
+    }
+    if (risk.isEmpty) {
+      await database.execute(
+          'CREATE TABLE Risk (id INTEGER PRIMARY KEY, user CHAR(40), datetime INTEGER, value INTEGER)');
+    }
+  }
+
+  void _saveRecord(data) async {
+    List values = data.split(',');
+
+    print(await database.rawQuery('select * from Beat'));
+
+    int now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    await database.transaction((txn) async {
+      int id1 = await txn.rawInsert(
+          'INSERT INTO Beat(user, datetime, value) VALUES("david", $now, ${values[0]})');
+      int id2 = await txn.rawInsert(
+          'INSERT INTO Oxygen(user, datetime, value) VALUES("david", $now, ${values[1]})');
+      // int id3 = await txn.rawInsert(
+      //     'INSERT INTO Breathe(user, datetime, value) VALUES("david", $now, 80)');
+      int id4 = await txn.rawInsert(
+          'INSERT INTO Risk(user, datetime, value) VALUES("david", $now, ${values[2]})');
+
+      print('inserted: $id1 $id2 $id4');
+    });
+  }
+
+  void _onDataReceived(Uint8List data) async {
     // Allocate buffer for parsed data
     int backspacesCounter = 0;
     data.forEach((byte) {
@@ -183,10 +253,12 @@ class _ChatPage extends State<ChatPage> {
 
     // Create message if there is new line character
     String dataString = String.fromCharCodes(buffer);
+    print(double.parse(dataString.split(',')[0]));
     int index = buffer.indexOf(13);
     if (~index != 0) {
       // \r\n
       setState(() {
+        _saveRecord(dataString);
         messages.add(_Message(
             1,
             backspacesCounter > 0

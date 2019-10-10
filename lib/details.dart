@@ -14,6 +14,7 @@ class DetailsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            Text('☎️\n'),
             Text('聯絡資訊: 臺中榮民總醫院胸腔內科', style: TextStyle(fontSize: 18)),
             Text('聯絡電話: 04-2359-2525', style: TextStyle(fontSize: 18)),
             SizedBox(
@@ -24,7 +25,7 @@ class DetailsPage extends StatelessWidget {
                 color: Colors.grey[300],
               ),
             ),
-            Text('🛠'),
+            Text('🛠\n'),
             Text('Version 0.0.1'),
             Text('Author: David Tsai'),
           ],
