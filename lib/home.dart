@@ -28,7 +28,7 @@ class HomePageState extends State<HomePage> {
   String _timeString;
   BackgroundCollectingTask _collectingTask;
   MonitorDatabase database;
-  static double beat = 0.0;
+  static double beat = 0;
   static int oxygen = 0;
   static int risk = 0;
   static bool recording = false;
@@ -62,6 +62,20 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  void _timer() {
+    int timer = DateTime.now().millisecondsSinceEpoch ~/ 1000 - startTime;
+    String hour = (timer ~/ 3600).toString();
+    String minute = (timer % 3600 ~/ 60).toString();
+    String second = (timer % 60).toString();
+    hour = (hour.length < 2) ? '0' + hour : hour;
+    minute = (minute.length < 2) ? '0' + minute : minute;
+    second = (second.length < 2) ? '0' + second : second;
+
+    setState(() {
+      _timeString = '$hour:$minute:$second';
+    });
+  }
+
   String _formatDateTime(DateTime dateTime) {
     return DateFormat('MM/dd  hh:mm:ss a').format(dateTime);
   }
@@ -84,7 +98,13 @@ class HomePageState extends State<HomePage> {
     database.initDatabase();
 
     _timeString = _formatDateTime(DateTime.now());
-    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    Timer.periodic(Duration(seconds: 1), (Timer t) {
+      if (recording) {
+        _timer();
+      } else {
+        _getTime();
+      }
+    });
     super.initState();
   }
 
@@ -207,7 +227,7 @@ class HomePageState extends State<HomePage> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    beat.toString() + ' BPM',
+                    beat.round().toString() + ' BPM',
                     style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
                   ),
                 ],
@@ -313,7 +333,7 @@ class HomePageState extends State<HomePage> {
       padding: EdgeInsets.symmetric(horizontal: 15),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: (recording) ? Colors.blueGrey[200] : Colors.grey[200],
       ),
       child: Column(
         children: <Widget>[

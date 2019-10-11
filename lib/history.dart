@@ -27,7 +27,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Map oxygenChart = {
     'average': '--',
-    'discription': '假資料-睡眠品質不佳 🐣',
+    'discription': '睡眠品質不佳 🐣(假資料)',
     'chart': null,
   };
 
@@ -35,7 +35,7 @@ class _HistoryPageState extends State<HistoryPage> {
     'hours': '--',
     'minutes': '--',
     'seconds': '--',
-    'compare': '假資料-比平均 -- -- 分鐘',
+    'compare': '比平均 -- -- 分鐘(假資料)',
     'chart': null,
   };
 
@@ -65,7 +65,7 @@ class _HistoryPageState extends State<HistoryPage> {
       List<RecordData> data = [];
       int sum = 0;
       for (int i = 0; i < oxygenList.length; i++) {
-        sum += oxygenList[i]['value'];
+        if (oxygenList[i]['value'] > 0) sum += oxygenList[i]['value'];
         data.add(new RecordData(i, oxygenList[i]['value'].toDouble()));
       }
       var chartdata = [
@@ -90,9 +90,9 @@ class _HistoryPageState extends State<HistoryPage> {
     setState(() {
       double sum = 0;
       for (int i = 0; i < beatsList.length; i++) {
-        sum += beatsList[i]['value'];
+        if (beatsList[i]['value'] > 0) sum += beatsList[i]['value'];
       }
-      beatsCount = (sum / beatsList.length).toString();
+      beatsCount = (sum ~/ beatsList.length).toString();
     });
   }
 
@@ -108,22 +108,24 @@ class _HistoryPageState extends State<HistoryPage> {
     setState(() {
       List<RecordData> data = [];
       for (int i = 0; i < breatheList.length; i++) {
-        data.add(new RecordData(i, breatheList[i]['value1']));
-        data.add(new RecordData(i, breatheList[i]['value2']));
-        data.add(new RecordData(i, breatheList[i]['value3']));
-        data.add(new RecordData(i, breatheList[i]['value4']));
-        data.add(new RecordData(i, breatheList[i]['value5']));
-        data.add(new RecordData(i, breatheList[i]['value6']));
-        data.add(new RecordData(i, breatheList[i]['value7']));
-        data.add(new RecordData(i, breatheList[i]['value8']));
-        data.add(new RecordData(i, breatheList[i]['value9']));
-        data.add(new RecordData(i, breatheList[i]['value10']));
-        data.add(new RecordData(i, breatheList[i]['value11']));
-        data.add(new RecordData(i, breatheList[i]['value12']));
-        data.add(new RecordData(i, breatheList[i]['value13']));
-        data.add(new RecordData(i, breatheList[i]['value14']));
-        data.add(new RecordData(i, breatheList[i]['value15']));
-        data.add(new RecordData(i, breatheList[i]['value16']));
+        if (breatheList[i]['value1'] > 0 && breatheList[i]['value9'] > 0) {
+          data.add(new RecordData(i, breatheList[i]['value1']));
+          data.add(new RecordData(i, breatheList[i]['value2']));
+          data.add(new RecordData(i, breatheList[i]['value3']));
+          data.add(new RecordData(i, breatheList[i]['value4']));
+          data.add(new RecordData(i, breatheList[i]['value5']));
+          data.add(new RecordData(i, breatheList[i]['value6']));
+          data.add(new RecordData(i, breatheList[i]['value7']));
+          data.add(new RecordData(i, breatheList[i]['value8']));
+          data.add(new RecordData(i, breatheList[i]['value9']));
+          data.add(new RecordData(i, breatheList[i]['value10']));
+          data.add(new RecordData(i, breatheList[i]['value11']));
+          data.add(new RecordData(i, breatheList[i]['value12']));
+          data.add(new RecordData(i, breatheList[i]['value13']));
+          data.add(new RecordData(i, breatheList[i]['value14']));
+          data.add(new RecordData(i, breatheList[i]['value15']));
+          data.add(new RecordData(i, breatheList[i]['value16']));
+        }
       }
       var chartdata = [
         new charts.Series<RecordData, int>(
