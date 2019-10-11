@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatelessWidget {
+  String _version = '0.0.4';
+
   List<TableRow> _table = [
     TableRow(children: [
       Center(child: Text('嚴重程度')),
@@ -80,7 +82,7 @@ class DetailsPage extends StatelessWidget {
             Text('聯絡電話: 04-2359-2525', style: TextStyle(fontSize: 18)),
             _divider(Colors.grey[300]),
             Text('🛠\n'),
-            Text('Version 0.0.3'),
+            Text('Version ' + _version),
             Text('Author: David Tsai'),
           ],
         ),
