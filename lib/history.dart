@@ -1,6 +1,7 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'common/database.dart';
+import 'common/RecordData.dart';
 
 class LinearSales {
   final int year;
@@ -26,16 +27,16 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Map oxygenChart = {
     'average': '--',
-    'discription': '--',
-    'chart': _createSampleData(),
+    'discription': '假資料-睡眠品質不佳 🐣',
+    'chart': null,
   };
 
   Map breatheChart = {
     'hours': '--',
     'minutes': '--',
     'seconds': '--',
-    'compare': '比平均多30分鐘',
-    'chart': _createSampleData(),
+    'compare': '假資料-比平均 -- -- 分鐘',
+    'chart': null,
   };
 
   @override
@@ -44,9 +45,9 @@ class _HistoryPageState extends State<HistoryPage> {
     database = new MonitorDatabase();
     _drawOxygenChart();
     _drawBreatheChart();
+    _drawBeats();
     // _drawEventsChart();
     // _drawAHI();
-    // _drawWarning();
   }
 
   @override
@@ -55,8 +56,43 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Future _drawOxygenChart() async {
+    Map lastSleep = await database.getLatestSleepRecord();
+
+    List oxygenList = await database.getOxygenRecord(
+        lastSleep['starttime'], lastSleep['endtime']);
+
     setState(() {
-      //
+      List<RecordData> data = [];
+      int sum = 0;
+      for (int i = 0; i < oxygenList.length; i++) {
+        sum += oxygenList[i]['value'];
+        data.add(new RecordData(i, oxygenList[i]['value'].toDouble()));
+      }
+      var chartdata = [
+        new charts.Series<RecordData, int>(
+          id: 'Records',
+          colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+          domainFn: (RecordData rec, _) => rec.sec,
+          measureFn: (RecordData rec, _) => rec.value,
+          data: data,
+        )
+      ];
+      oxygenChart['chart'] = charts.LineChart(chartdata, animate: false);
+      oxygenChart['average'] = (sum ~/ data.length).toString();
+    });
+  }
+
+  Future _drawBeats() async {
+    Map lastSleep = await database.getLatestSleepRecord();
+    List beatsList = await database.getBeatsRecord(
+        lastSleep['starttime'], lastSleep['endtime']);
+
+    setState(() {
+      double sum = 0;
+      for (int i = 0; i < beatsList.length; i++) {
+        sum += beatsList[i]['value'];
+      }
+      beatsCount = (sum / beatsList.length).toString();
     });
   }
 
@@ -67,19 +103,50 @@ class _HistoryPageState extends State<HistoryPage> {
     int minute = (lastSleep['endtime'] - lastSleep['starttime']) % 3600 ~/ 60;
     int second = (lastSleep['endtime'] - lastSleep['starttime']) % 60;
 
+    List breatheList = await database.getBreatheRecord(
+        lastSleep['starttime'], lastSleep['endtime']);
     setState(() {
+      List<RecordData> data = [];
+      for (int i = 0; i < breatheList.length; i++) {
+        data.add(new RecordData(i, breatheList[i]['value1']));
+        data.add(new RecordData(i, breatheList[i]['value2']));
+        data.add(new RecordData(i, breatheList[i]['value3']));
+        data.add(new RecordData(i, breatheList[i]['value4']));
+        data.add(new RecordData(i, breatheList[i]['value5']));
+        data.add(new RecordData(i, breatheList[i]['value6']));
+        data.add(new RecordData(i, breatheList[i]['value7']));
+        data.add(new RecordData(i, breatheList[i]['value8']));
+        data.add(new RecordData(i, breatheList[i]['value9']));
+        data.add(new RecordData(i, breatheList[i]['value10']));
+        data.add(new RecordData(i, breatheList[i]['value11']));
+        data.add(new RecordData(i, breatheList[i]['value12']));
+        data.add(new RecordData(i, breatheList[i]['value13']));
+        data.add(new RecordData(i, breatheList[i]['value14']));
+        data.add(new RecordData(i, breatheList[i]['value15']));
+        data.add(new RecordData(i, breatheList[i]['value16']));
+      }
+      var chartdata = [
+        new charts.Series<RecordData, int>(
+          id: 'Records',
+          colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+          domainFn: (RecordData rec, _) => rec.sec,
+          measureFn: (RecordData rec, _) => rec.value,
+          data: data,
+        )
+      ];
       breatheChart['hours'] = hour.toString();
       breatheChart['minutes'] = minute.toString();
       breatheChart['seconds'] = second.toString();
+      breatheChart['chart'] = charts.LineChart(chartdata, animate: false);
     });
   }
 
   static List<charts.Series<LinearSales, int>> _createSampleData() {
     final data = [
       new LinearSales(0, 5),
-      new LinearSales(1, 25),
-      new LinearSales(2, 100),
-      new LinearSales(3, 75),
+      new LinearSales(1, 65),
+      new LinearSales(2, 46),
+      new LinearSales(3, 100),
     ];
 
     return [
@@ -114,7 +181,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     style: TextStyle(fontSize: 24.0, color: Colors.blue),
                   ),
                   Text(
-                    oxygenChart['average'],
+                    '平均血氧值 ' + oxygenChart['average'],
                     style: TextStyle(fontSize: 20.0, color: Colors.grey[800]),
                   ),
                   Text(
@@ -125,8 +192,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: ConstrainedBox(
                       constraints: BoxConstraints.expand(height: 200.0),
-                      child:
-                          charts.LineChart(_createSampleData(), animate: false),
+                      child: oxygenChart['chart'],
                     ),
                   ),
                 ],
@@ -163,8 +229,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints.expand(height: 160.0),
-                    child:
-                        charts.PieChart(oxygenChart['chart'], animate: false),
+                    child: charts.PieChart(_createSampleData(), animate: false),
                   ),
                 ],
               ),
@@ -260,8 +325,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: ConstrainedBox(
                       constraints: BoxConstraints.expand(height: 200.0),
-                      child: charts.LineChart(breatheChart['chart'],
-                          animate: false),
+                      child: breatheChart['chart'],
                     ),
                   ),
                 ],

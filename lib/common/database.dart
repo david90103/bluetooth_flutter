@@ -63,12 +63,16 @@ class MonitorDatabase {
           'INSERT INTO Beat(user, datetime, value) VALUES("david", $now, ${values[0]})');
       int id2 = await txn.rawInsert(
           'INSERT INTO Oxygen(user, datetime, value) VALUES("david", $now, ${values[1]})');
-      // int id3 = await txn.rawInsert(
-      //     'INSERT INTO Breathe(user, datetime, value) VALUES("david", $now, 80)');
+      int id3 = await txn.rawInsert(
+          'INSERT INTO Breathe(user, datetime, value1, value2, value3, value4, value5, value6, '
+          'value7, value8, value9, value10, value11, value12, value13, value14, value15, value16) VALUES("david", $now, '
+          '${values[2]}, ${values[3]}, ${values[4]}, ${values[5]}, ${values[6]}, ${values[7]}, ${values[8]}, '
+          '${values[9]}, ${values[10]}, ${values[11]}, ${values[12]}, ${values[13]}, ${values[14]}, ${values[15]}, '
+          '${values[16]}, ${values[17]})');
       int id4 = await txn.rawInsert(
-          'INSERT INTO Risk(user, datetime, value) VALUES("david", $now, ${values[2]})');
+          'INSERT INTO Risk(user, datetime, value) VALUES("david", $now, ${values[18]})');
 
-      print('record inserted: $id1 $id2 $id4');
+      print('record inserted: $id1 $id2 $id3 $id4');
     });
   }
 
@@ -77,6 +81,27 @@ class MonitorDatabase {
     var sleep = await database
         .rawQuery('SELECT * FROM Sleep ORDER BY endtime DESC LIMIT 1;');
     return sleep.toList()[0];
+  }
+
+  Future getOxygenRecord(starttime, endtime) async {
+    await _checkDatabaseInit();
+    var oxygen = await database.rawQuery(
+        'SELECT value FROM Oxygen WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+    return oxygen.toList();
+  }
+
+  Future getBreatheRecord(starttime, endtime) async {
+    await _checkDatabaseInit();
+    var breathe = await database.rawQuery(
+        'SELECT * FROM Breathe WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+    return breathe.toList();
+  }
+
+  Future getBeatsRecord(starttime, endtime) async {
+    await _checkDatabaseInit();
+    var breathe = await database.rawQuery(
+        'SELECT value FROM Beat WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+    return breathe.toList();
   }
 
   Future saveTime(start, end) async {

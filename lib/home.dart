@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/services.dart';
 import 'common/drawer.dart';
-import 'common/breathe.dart';
+import 'common/RecordData.dart';
 import 'common/database.dart';
 
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -37,18 +37,18 @@ class HomePageState extends State<HomePage> {
 
   static List<double> breathe;
 
-  static List<charts.Series<Breathe, int>> _chartData() {
-    List<Breathe> data = [];
+  static List<charts.Series<RecordData, int>> _chartData() {
+    List<RecordData> data = [];
     for (int i = 0; i < 480; i++) {
-      data.add(new Breathe(i - 480, breathe[i]));
+      data.add(new RecordData(i - 480, breathe[i]));
     }
 
     return [
-      new charts.Series<Breathe, int>(
-        id: 'Sales',
+      new charts.Series<RecordData, int>(
+        id: 'Reocrds',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (Breathe sales, _) => sales.sec,
-        measureFn: (Breathe sales, _) => sales.value,
+        domainFn: (RecordData rec, _) => rec.sec,
+        measureFn: (RecordData rec, _) => rec.value,
         data: data,
       )
     ];
