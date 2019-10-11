@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/services.dart';
 import 'common/drawer.dart';
 import 'common/breathe.dart';
+import 'common/database.dart';
 
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'bluetooth/BackgroundCollectingTask.dart';
@@ -26,10 +27,13 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   String _timeString;
   BackgroundCollectingTask _collectingTask;
+  MonitorDatabase database;
   static double beat = 0.0;
   static int oxygen = 0;
   static int risk = 0;
   static bool recording = false;
+  static bool calculating = false;
+  static int startTime;
 
   static List<double> breathe;
 
@@ -76,6 +80,9 @@ class HomePageState extends State<HomePage> {
       breathe.add(0);
     }
 
+    database = new MonitorDatabase();
+    database.initDatabase();
+
     _timeString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
@@ -84,6 +91,7 @@ class HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _collectingTask?.dispose();
+    database.close();
     super.dispose();
   }
 
@@ -138,6 +146,15 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  Future _calculate() async {
+    int now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    database.saveTime(startTime, now);
+
+    calculating = false;
+    //完成後切換到歷史紀錄頁面
+    Navigator.pushNamed(context, '/history');
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget row1 = Padding(
@@ -148,7 +165,6 @@ class HomePageState extends State<HomePage> {
           Expanded(
             child: new Container(
               margin: EdgeInsets.only(right: 5.0),
-              padding: EdgeInsets.symmetric(vertical: 10.0),
               alignment: Alignment.center,
               decoration: new BoxDecoration(
                 color: Colors.white,
@@ -175,7 +191,6 @@ class HomePageState extends State<HomePage> {
           Expanded(
             child: new Container(
               margin: EdgeInsets.only(left: 5.0),
-              padding: EdgeInsets.symmetric(vertical: 10.0),
               alignment: Alignment.center,
               decoration: new BoxDecoration(
                 color: Colors.white,
@@ -259,7 +274,7 @@ class HomePageState extends State<HomePage> {
           children: <Widget>[
             Text(
               _timeString,
-              style: TextStyle(fontSize: 26.0, color: Colors.blue),
+              style: TextStyle(fontSize: 22.0, color: Colors.blue),
             ),
             Padding(
               padding: EdgeInsets.only(top: 10.0),
@@ -267,19 +282,26 @@ class HomePageState extends State<HomePage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
                     recording = !recording;
-                    if (!recording) {
-                      //完成後切換到歷史紀錄頁面
-                      Navigator.pushNamed(context, '/history');
-                    }
                   });
+                  if (recording) {
+                    //start sleeping
+                    startTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+                  } else if (calculating) {
+                    //calculating
+                    return null;
+                  } else {
+                    calculating = true;
+                    //end sleeping
+                    await _calculate();
+                  }
                 },
-                padding: EdgeInsets.symmetric(vertical: 13.0, horizontal: 50.0),
+                padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 50.0),
                 color: recording ? Colors.green : Colors.redAccent,
                 child: Text(recording ? '記錄中' : '開始記錄',
-                    style: TextStyle(color: Colors.white, fontSize: 22)),
+                    style: TextStyle(color: Colors.white, fontSize: 18)),
               ),
             ),
           ],

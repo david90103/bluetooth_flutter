@@ -1,5 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'common/database.dart';
 
 class LinearSales {
   final int year;
@@ -8,8 +9,70 @@ class LinearSales {
   LinearSales(this.year, this.sales);
 }
 
-class HistoryPage extends StatelessWidget {
-  static String tag = 'history-page';
+class HistoryPage extends StatefulWidget {
+  HistoryPage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _HistoryPageState createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
+  MonitorDatabase database;
+  String ahi = '--';
+  String beatsCount = '--';
+  String eventCount = '--';
+
+  Map oxygenChart = {
+    'average': '--',
+    'discription': '--',
+    'chart': _createSampleData(),
+  };
+
+  Map breatheChart = {
+    'hours': '--',
+    'minutes': '--',
+    'seconds': '--',
+    'compare': '比平均多30分鐘',
+    'chart': _createSampleData(),
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    database = new MonitorDatabase();
+    _drawOxygenChart();
+    _drawBreatheChart();
+    // _drawEventsChart();
+    // _drawAHI();
+    // _drawWarning();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future _drawOxygenChart() async {
+    setState(() {
+      //
+    });
+  }
+
+  Future _drawBreatheChart() async {
+    Map lastSleep = await database.getLatestSleepRecord();
+
+    int hour = (lastSleep['endtime'] - lastSleep['starttime']) ~/ 3600;
+    int minute = (lastSleep['endtime'] - lastSleep['starttime']) % 3600 ~/ 60;
+    int second = (lastSleep['endtime'] - lastSleep['starttime']) % 60;
+
+    setState(() {
+      breatheChart['hours'] = hour.toString();
+      breatheChart['minutes'] = minute.toString();
+      breatheChart['seconds'] = second.toString();
+    });
+  }
 
   static List<charts.Series<LinearSales, int>> _createSampleData() {
     final data = [
@@ -51,11 +114,11 @@ class HistoryPage extends StatelessWidget {
                     style: TextStyle(fontSize: 24.0, color: Colors.blue),
                   ),
                   Text(
-                    '平均血氧值 87',
+                    oxygenChart['average'],
                     style: TextStyle(fontSize: 20.0, color: Colors.grey[800]),
                   ),
                   Text(
-                    '睡眠品質不佳 🐣',
+                    oxygenChart['discription'],
                     style: TextStyle(fontSize: 20.0, color: Colors.grey[600]),
                   ),
                   Padding(
@@ -95,12 +158,13 @@ class HistoryPage extends StatelessWidget {
                     style: TextStyle(fontSize: 20.0, color: Colors.blue),
                   ),
                   Text(
-                    '共150次',
+                    '共' + eventCount + '次',
                     style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints.expand(height: 160.0),
-                    child: charts.PieChart(_createSampleData(), animate: false),
+                    child:
+                        charts.PieChart(oxygenChart['chart'], animate: false),
                   ),
                 ],
               ),
@@ -124,7 +188,7 @@ class HistoryPage extends StatelessWidget {
                         style: TextStyle(fontSize: 20.0, color: Colors.blue),
                       ),
                       Text(
-                        '48次/hr',
+                        ahi + ' 次/hr',
                         style:
                             TextStyle(fontSize: 18.0, color: Colors.grey[800]),
                       ),
@@ -142,11 +206,11 @@ class HistoryPage extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        '預警警報次數',
+                        '心跳次數❤️',
                         style: TextStyle(fontSize: 20.0, color: Colors.blue),
                       ),
                       Text(
-                        '共85次',
+                        beatsCount + ' 次',
                         style:
                             TextStyle(fontSize: 18.0, color: Colors.grey[800]),
                       ),
@@ -179,19 +243,25 @@ class HistoryPage extends StatelessWidget {
                     style: TextStyle(fontSize: 24.0, color: Colors.blue),
                   ),
                   Text(
-                    '睡眠時間6小時17分鐘',
+                    '睡眠時間 ' +
+                        breatheChart['hours'] +
+                        ' 小時 ' +
+                        breatheChart['minutes'] +
+                        ' 分鐘 ' +
+                        breatheChart['seconds'] +
+                        ' 秒',
                     style: TextStyle(fontSize: 20.0, color: Colors.grey[800]),
                   ),
                   Text(
-                    '比平均多30分鐘',
+                    breatheChart['compare'],
                     style: TextStyle(fontSize: 20.0, color: Colors.grey[600]),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: ConstrainedBox(
                       constraints: BoxConstraints.expand(height: 200.0),
-                      child:
-                          charts.LineChart(_createSampleData(), animate: false),
+                      child: charts.LineChart(breatheChart['chart'],
+                          animate: false),
                     ),
                   ),
                 ],
