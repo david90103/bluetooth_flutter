@@ -4,6 +4,11 @@ import 'details.dart';
 import 'home.dart';
 import 'login.dart';
 import 'history.dart';
+import 'charts/ahi.dart';
+import 'charts/beat.dart';
+import 'charts/breathe.dart';
+import 'charts/events.dart';
+import 'charts/oxygen.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,6 +19,11 @@ class MyApp extends StatelessWidget {
     '/bluetooth': (context) => bluetooth.MainPage(),
     '/details': (context) => DetailsPage(),
     '/history': (context) => HistoryPage(),
+    '/history/beat': (context) => BeatPage(),
+    '/history/oxygen': (context) => OxygenPage(),
+    '/history/events': (context) => EventsPage(),
+    '/history/ahi': (context) => AHIPage(),
+    '/history/breathe': (context) => BreathePage(),
   };
 
   @override

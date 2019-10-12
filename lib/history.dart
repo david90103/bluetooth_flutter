@@ -174,7 +174,7 @@ class _HistoryPageState extends State<HistoryPage> {
               color: Colors.white,
               child: InkWell(
                 onTap: () {
-                  print('tap');
+                  Navigator.pushNamed(context, '/history/oxygen');
                 },
                 child: new Container(
                   padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -220,13 +220,13 @@ class _HistoryPageState extends State<HistoryPage> {
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(right: 5),
               child: new Material(
                 borderRadius: new BorderRadius.all(Radius.circular(15.0)),
                 color: Colors.white,
                 child: InkWell(
                   onTap: () {
-                    print('tap');
+                    Navigator.pushNamed(context, '/history/events');
                   },
                   child: new Container(
                     padding: EdgeInsets.only(top: 20.0),
@@ -264,7 +264,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () {
-                        print('tap');
+                        Navigator.pushNamed(context, '/history/ahi');
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -294,10 +294,9 @@ class _HistoryPageState extends State<HistoryPage> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () {
-                        print('tap');
+                        Navigator.pushNamed(context, '/history/beat');
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 10.0, left: 10.0),
                         padding: EdgeInsets.symmetric(vertical: 25.0),
                         alignment: Alignment.center,
                         child: Column(
@@ -335,7 +334,7 @@ class _HistoryPageState extends State<HistoryPage> {
               color: Colors.white,
               child: InkWell(
                 onTap: () {
-                  print('tap');
+                  Navigator.pushNamed(context, '/history/breathe');
                 },
                 child: new Container(
                   padding: EdgeInsets.symmetric(vertical: 20.0),

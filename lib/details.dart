@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatelessWidget {
-  String _version = '0.0.5';
+  final String _version = '0.0.5';
 
-  List<TableRow> _table = [
+  final List<TableRow> _table = [
     TableRow(children: [
       Center(child: Text('嚴重程度')),
       Center(child: Text('AHI(次/hr)'))
