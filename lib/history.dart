@@ -145,7 +145,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   static List<charts.Series<LinearSales, int>> _createSampleData() {
     final data = [
-      new LinearSales(0, 5),
       new LinearSales(1, 65),
       new LinearSales(2, 46),
       new LinearSales(3, 100),
