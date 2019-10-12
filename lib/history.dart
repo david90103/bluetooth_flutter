@@ -169,35 +169,43 @@ class _HistoryPageState extends State<HistoryPage> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: new Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0),
-              alignment: Alignment.center,
-              decoration: new BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.all(Radius.circular(15.0)),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '整夜血氧數據',
-                    style: TextStyle(fontSize: 24.0, color: Colors.blue),
+            child: new Material(
+              borderRadius: new BorderRadius.all(Radius.circular(15.0)),
+              color: Colors.white,
+              child: InkWell(
+                onTap: () {
+                  print('tap');
+                },
+                child: new Container(
+                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        '整夜血氧數據',
+                        style: TextStyle(fontSize: 24.0, color: Colors.blue),
+                      ),
+                      Text(
+                        '平均血氧值 ' + oxygenChart['average'],
+                        style:
+                            TextStyle(fontSize: 20.0, color: Colors.grey[800]),
+                      ),
+                      Text(
+                        oxygenChart['discription'],
+                        style:
+                            TextStyle(fontSize: 20.0, color: Colors.grey[600]),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints.expand(height: 200.0),
+                          child: oxygenChart['chart'],
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '平均血氧值 ' + oxygenChart['average'],
-                    style: TextStyle(fontSize: 20.0, color: Colors.grey[800]),
-                  ),
-                  Text(
-                    oxygenChart['discription'],
-                    style: TextStyle(fontSize: 20.0, color: Colors.grey[600]),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints.expand(height: 200.0),
-                      child: oxygenChart['chart'],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -211,77 +219,103 @@ class _HistoryPageState extends State<HistoryPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Expanded(
-            child: new Container(
-              margin: EdgeInsets.only(right: 5.0),
-              padding: EdgeInsets.only(top: 20.0),
-              alignment: Alignment.center,
-              decoration: new BoxDecoration(
-                color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: new Material(
                 borderRadius: new BorderRadius.all(Radius.circular(15.0)),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '睡眠事件所占比',
-                    style: TextStyle(fontSize: 20.0, color: Colors.blue),
+                color: Colors.white,
+                child: InkWell(
+                  onTap: () {
+                    print('tap');
+                  },
+                  child: new Container(
+                    padding: EdgeInsets.only(top: 20.0),
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          '睡眠事件所占比',
+                          style: TextStyle(fontSize: 20.0, color: Colors.blue),
+                        ),
+                        Text(
+                          '共' + eventCount + '次',
+                          style: TextStyle(
+                              fontSize: 18.0, color: Colors.grey[800]),
+                        ),
+                        ConstrainedBox(
+                          constraints: BoxConstraints.expand(height: 160.0),
+                          child: charts.PieChart(_createSampleData(),
+                              animate: false),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    '共' + eventCount + '次',
-                    style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints.expand(height: 160.0),
-                    child: charts.PieChart(_createSampleData(), animate: false),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
           Expanded(
             child: Column(
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0, left: 10.0),
-                  padding: EdgeInsets.symmetric(vertical: 25.0),
-                  alignment: Alignment.center,
-                  decoration: new BoxDecoration(
-                    color: Colors.white,
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10, left: 10),
+                  child: Material(
                     borderRadius: new BorderRadius.all(Radius.circular(15.0)),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        'AHI指數',
-                        style: TextStyle(fontSize: 20.0, color: Colors.blue),
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () {
+                        print('tap');
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 25.0),
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              'AHI指數',
+                              style:
+                                  TextStyle(fontSize: 20.0, color: Colors.blue),
+                            ),
+                            Text(
+                              ahi + ' 次/hr',
+                              style: TextStyle(
+                                  fontSize: 18.0, color: Colors.grey[800]),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        ahi + ' 次/hr',
-                        style:
-                            TextStyle(fontSize: 18.0, color: Colors.grey[800]),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 10.0, left: 10.0),
-                  padding: EdgeInsets.symmetric(vertical: 25.0),
-                  alignment: Alignment.center,
-                  decoration: new BoxDecoration(
-                    color: Colors.white,
+                Padding(
+                  padding: EdgeInsets.only(top: 10, left: 10),
+                  child: Material(
                     borderRadius: new BorderRadius.all(Radius.circular(15.0)),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        '心跳次數❤️',
-                        style: TextStyle(fontSize: 20.0, color: Colors.blue),
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () {
+                        print('tap');
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 10.0, left: 10.0),
+                        padding: EdgeInsets.symmetric(vertical: 25.0),
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              '心跳次數❤️',
+                              style:
+                                  TextStyle(fontSize: 20.0, color: Colors.blue),
+                            ),
+                            Text(
+                              beatsCount + ' 次',
+                              style: TextStyle(
+                                  fontSize: 18.0, color: Colors.grey[800]),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        beatsCount + ' 次',
-                        style:
-                            TextStyle(fontSize: 18.0, color: Colors.grey[800]),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -296,41 +330,49 @@ class _HistoryPageState extends State<HistoryPage> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: new Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0),
-              alignment: Alignment.center,
-              decoration: new BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.all(Radius.circular(15.0)),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '整夜呼吸數據',
-                    style: TextStyle(fontSize: 24.0, color: Colors.blue),
+            child: new Material(
+              borderRadius: new BorderRadius.all(Radius.circular(15.0)),
+              color: Colors.white,
+              child: InkWell(
+                onTap: () {
+                  print('tap');
+                },
+                child: new Container(
+                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        '整夜呼吸數據',
+                        style: TextStyle(fontSize: 24.0, color: Colors.blue),
+                      ),
+                      Text(
+                        '睡眠時間 ' +
+                            breatheChart['hours'] +
+                            ' 小時 ' +
+                            breatheChart['minutes'] +
+                            ' 分鐘 ' +
+                            breatheChart['seconds'] +
+                            ' 秒',
+                        style:
+                            TextStyle(fontSize: 20.0, color: Colors.grey[800]),
+                      ),
+                      Text(
+                        breatheChart['compare'],
+                        style:
+                            TextStyle(fontSize: 20.0, color: Colors.grey[600]),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints.expand(height: 200.0),
+                          child: breatheChart['chart'],
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '睡眠時間 ' +
-                        breatheChart['hours'] +
-                        ' 小時 ' +
-                        breatheChart['minutes'] +
-                        ' 分鐘 ' +
-                        breatheChart['seconds'] +
-                        ' 秒',
-                    style: TextStyle(fontSize: 20.0, color: Colors.grey[800]),
-                  ),
-                  Text(
-                    breatheChart['compare'],
-                    style: TextStyle(fontSize: 20.0, color: Colors.grey[600]),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints.expand(height: 200.0),
-                      child: breatheChart['chart'],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
