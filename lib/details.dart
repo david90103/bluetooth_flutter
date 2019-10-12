@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatelessWidget {
-  final String _version = '0.0.5';
+  final String _version = '0.0.6';
 
   final List<TableRow> _table = [
     TableRow(children: [
