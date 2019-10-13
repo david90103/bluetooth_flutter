@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_version/get_version.dart';
 
-class DetailsPage extends StatelessWidget {
-  final String _version = '0.0.6';
+class DetailsPage extends StatefulWidget {
+  @override
+  DetailsPageState createState() => DetailsPageState();
+}
+
+class DetailsPageState extends State<DetailsPage> {
+  String _version;
 
   final List<TableRow> _table = [
     TableRow(children: [
@@ -14,6 +20,19 @@ class DetailsPage extends StatelessWidget {
         children: [Center(child: Text('中度')), Center(child: Text('15~30'))]),
     TableRow(children: [Center(child: Text('重度')), Center(child: Text('>30'))]),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _getVersion();
+  }
+
+  void _getVersion() async {
+    String version = await GetVersion.projectVersion;
+    setState(() {
+      _version = version;
+    });
+  }
 
   Widget _buildTable() {
     return Card(

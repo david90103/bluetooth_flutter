@@ -83,11 +83,25 @@ class MonitorDatabase {
     return sleep.toList()[0];
   }
 
+  Future getLatestOxygenRecord(starttime, endtime) async {
+    await _checkDatabaseInit();
+    var oxygen = await database.rawQuery(
+        'SELECT value FROM Oxygen WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime DESC LIMIT 400;');
+    return oxygen.toList();
+  }
+
   Future getOxygenRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var oxygen = await database.rawQuery(
         'SELECT value FROM Oxygen WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return oxygen.toList();
+  }
+
+  Future getLatestBreatheRecord(starttime, endtime) async {
+    await _checkDatabaseInit();
+    var breathe = await database.rawQuery(
+        'SELECT * FROM Breathe WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime DESC LIMIT 400;');
+    return breathe.toList();
   }
 
   Future getBreatheRecord(starttime, endtime) async {
@@ -101,6 +115,13 @@ class MonitorDatabase {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
         'SELECT value FROM Beat WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+    return breathe.toList();
+  }
+
+  Future getRiskRecord(starttime, endtime) async {
+    await _checkDatabaseInit();
+    var breathe = await database.rawQuery(
+        'SELECT value FROM Risk WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return breathe.toList();
   }
 

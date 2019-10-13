@@ -14,6 +14,7 @@ class BeatPage extends StatefulWidget {
 
 class BeatPageState extends State<BeatPage> {
   MonitorDatabase database;
+  bool _ready = false;
 
   double beatMin = 999;
   double beatMax = 0;
@@ -44,7 +45,7 @@ class BeatPageState extends State<BeatPage> {
       double value;
       for (int i = 0; i < beatList.length; i++) {
         value = beatList[i]['value'];
-        if (value > 0) {
+        if (value - 1 > 0) {
           if (beatMin > value) beatMin = value;
           if (beatMax < value) beatMax = value;
         }
@@ -60,6 +61,7 @@ class BeatPageState extends State<BeatPage> {
         )
       ];
       beatChart['chart'] = charts.LineChart(chartdata, animate: false);
+      _ready = true;
     });
   }
 
@@ -88,7 +90,9 @@ class BeatPageState extends State<BeatPage> {
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: ConstrainedBox(
                           constraints: BoxConstraints.expand(height: 200.0),
-                          child: beatChart['chart'],
+                          child: (_ready)
+                              ? beatChart['chart']
+                              : Center(child: Text('圖表載入中')),
                         ),
                       ),
                       Row(

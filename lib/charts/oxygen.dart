@@ -14,6 +14,7 @@ class OxygenPage extends StatefulWidget {
 
 class OxygenPageState extends State<OxygenPage> {
   MonitorDatabase database;
+  bool _ready = false;
 
   Map oxygenChart = {
     'average': '--',
@@ -66,6 +67,7 @@ class OxygenPageState extends State<OxygenPage> {
       ];
       oxygenChart['chart'] = charts.LineChart(chartdata, animate: false);
       oxygenChart['average'] = (sum ~/ data.length).toString();
+      _ready = true;
     });
   }
 
@@ -104,7 +106,9 @@ class OxygenPageState extends State<OxygenPage> {
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: ConstrainedBox(
                           constraints: BoxConstraints.expand(height: 200.0),
-                          child: oxygenChart['chart'],
+                          child: (_ready)
+                              ? oxygenChart['chart']
+                              : Center(child: Text('圖表載入中')),
                         ),
                       ),
                       Row(

@@ -14,6 +14,7 @@ class BreathePage extends StatefulWidget {
 
 class BreathePageState extends State<BreathePage> {
   MonitorDatabase database;
+  bool _ready = false;
 
   Map breatheChart = {
     'hours': '--',
@@ -44,6 +45,7 @@ class BreathePageState extends State<BreathePage> {
 
     List breatheList = await database.getBreatheRecord(
         lastSleep['starttime'], lastSleep['endtime']);
+
     setState(() {
       List<RecordData> data = [];
       for (int i = 0; i < breatheList.length; i++) {
@@ -79,6 +81,7 @@ class BreathePageState extends State<BreathePage> {
       breatheChart['minutes'] = minute.toString();
       breatheChart['seconds'] = second.toString();
       breatheChart['chart'] = charts.LineChart(chartdata, animate: false);
+      _ready = true;
     });
   }
 
@@ -123,7 +126,9 @@ class BreathePageState extends State<BreathePage> {
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: ConstrainedBox(
                           constraints: BoxConstraints.expand(height: 200.0),
-                          child: breatheChart['chart'],
+                          child: (_ready)
+                              ? breatheChart['chart']
+                              : Center(child: Text('圖表載入中')),
                         ),
                       ),
                     ],

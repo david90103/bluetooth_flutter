@@ -3,13 +3,6 @@ import 'package:flutter/material.dart';
 import 'common/database.dart';
 import 'common/RecordData.dart';
 
-class LinearSales {
-  final int year;
-  final int sales;
-
-  LinearSales(this.year, this.sales);
-}
-
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key key, this.title}) : super(key: key);
 
@@ -39,6 +32,12 @@ class _HistoryPageState extends State<HistoryPage> {
     'chart': null,
   };
 
+  Map eventsChart = {
+    'low': 1,
+    'mid': 1,
+    'high': 1,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -46,8 +45,8 @@ class _HistoryPageState extends State<HistoryPage> {
     _drawOxygenChart();
     _drawBreatheChart();
     _drawBeats();
-    // _drawEventsChart();
-    // _drawAHI();
+    //睡眠事件圖表及AHI指數
+    _drawEventsChartAndAHI();
   }
 
   @override
@@ -57,8 +56,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future _drawOxygenChart() async {
     Map lastSleep = await database.getLatestSleepRecord();
-
-    List oxygenList = await database.getOxygenRecord(
+    List oxygenList = await database.getLatestOxygenRecord(
         lastSleep['starttime'], lastSleep['endtime']);
 
     setState(() {
@@ -78,7 +76,36 @@ class _HistoryPageState extends State<HistoryPage> {
         )
       ];
       oxygenChart['chart'] = charts.LineChart(chartdata, animate: false);
-      oxygenChart['average'] = (sum ~/ data.length).toString();
+      oxygenChart['average'] =
+          (data.length > 0) ? (sum ~/ data.length).toString() : '--';
+    });
+  }
+
+  Future _drawEventsChartAndAHI() async {
+    int count = 0;
+    eventsChart['low'] = eventsChart['mid'] = eventsChart['high'] = 0;
+
+    Map lastSleep = await database.getLatestSleepRecord();
+    int hour = (lastSleep['endtime'] - lastSleep['starttime']) ~/ 3600;
+    List risk = await database.getRiskRecord(
+        lastSleep['starttime'], lastSleep['endtime']);
+
+    setState(() {
+      for (int i = 0; i < risk.length; i++) {
+        if (risk[i]['value'] > 80) {
+          eventsChart['high']++;
+        } else if (risk[i]['value'] > 40) {
+          eventsChart['mid']++;
+        } else if (risk[i]['value'] > 0) {
+          eventsChart['low']++;
+        }
+        if (i + 1 < risk.length &&
+            risk[i]['value'] > 80 &&
+            risk[i + 1]['value'] < 80) {
+          count++;
+        }
+      }
+      ahi = (hour > 0) ? (count ~/ hour).toString() : count.toString();
     });
   }
 
@@ -89,10 +116,14 @@ class _HistoryPageState extends State<HistoryPage> {
 
     setState(() {
       double sum = 0;
+      int count = 0;
       for (int i = 0; i < beatsList.length; i++) {
-        if (beatsList[i]['value'] > 0) sum += beatsList[i]['value'];
+        if (beatsList[i]['value'] - 1 > 0) {
+          sum += beatsList[i]['value'];
+          count++;
+        }
       }
-      beatsCount = (sum ~/ beatsList.length).toString();
+      beatsCount = (count > 0) ? (sum ~/ count).toString() : '--';
     });
   }
 
@@ -103,7 +134,7 @@ class _HistoryPageState extends State<HistoryPage> {
     int minute = (lastSleep['endtime'] - lastSleep['starttime']) % 3600 ~/ 60;
     int second = (lastSleep['endtime'] - lastSleep['starttime']) % 60;
 
-    List breatheList = await database.getBreatheRecord(
+    List breatheList = await database.getLatestBreatheRecord(
         lastSleep['starttime'], lastSleep['endtime']);
     setState(() {
       List<RecordData> data = [];
@@ -143,19 +174,19 @@ class _HistoryPageState extends State<HistoryPage> {
     });
   }
 
-  static List<charts.Series<LinearSales, int>> _createSampleData() {
+  List<charts.Series<RecordData, int>> _createEventsData() {
     final data = [
-      new LinearSales(1, 65),
-      new LinearSales(2, 46),
-      new LinearSales(3, 100),
+      new RecordData(1, eventsChart['low'].toDouble()),
+      new RecordData(2, eventsChart['mid'].toDouble()),
+      new RecordData(3, eventsChart['high'].toDouble()),
     ];
-
     return [
-      new charts.Series<LinearSales, int>(
-        id: 'Sales',
+      new charts.Series<RecordData, int>(
+        id: 'Events',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
+        domainFn: (RecordData sales, _) =>
+            sales.sec, //map key instead of second
+        measureFn: (RecordData sales, _) => sales.value,
         data: data,
       )
     ];
@@ -243,7 +274,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         ),
                         ConstrainedBox(
                           constraints: BoxConstraints.expand(height: 160.0),
-                          child: charts.PieChart(_createSampleData(),
+                          child: charts.PieChart(_createEventsData(),
                               animate: false),
                         ),
                       ],
