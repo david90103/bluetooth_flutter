@@ -169,7 +169,7 @@ class OxygenPageState extends State<OxygenPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text('睡眠呼吸檢測數據', style: TextStyle(color: Colors.white)),
+        title: Text('整夜血氧數據', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
       ),
       body: body,

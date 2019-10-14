@@ -111,6 +111,14 @@ class MonitorDatabase {
     return breathe.toList();
   }
 
+  Future getBreatheRecordWithRisk(starttime, endtime) async {
+    await _checkDatabaseInit();
+    var breathe = await database.rawQuery(
+        'SELECT * FROM (Breathe LEFT JOIN Risk ON Breathe.datetime=Risk.datetime) '
+        'WHERE Breathe.datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+    return breathe.toList();
+  }
+
   Future getBeatsRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
@@ -121,7 +129,7 @@ class MonitorDatabase {
   Future getRiskRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
-        'SELECT value FROM Risk WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+        'SELECT value, datetime FROM Risk WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return breathe.toList();
   }
 

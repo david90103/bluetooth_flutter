@@ -89,6 +89,7 @@ class _MainPage extends State<MainPage> {
           '裝置連接',
           style: TextStyle(color: Colors.white),
         ),
+        backgroundColor: Colors.orangeAccent,
       ),
       body: Container(
         child: ListView(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
-import '../common/RecordData.dart';
 import '../common/database.dart';
 
 class EventsPage extends StatefulWidget {
@@ -115,7 +114,7 @@ class EventsPageState extends State<EventsPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text('睡眠呼吸檢測數據', style: TextStyle(color: Colors.white)),
+        title: Text('睡眠事件所占比', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
       ),
       body: body,

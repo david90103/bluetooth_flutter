@@ -83,7 +83,7 @@ class DetailsPageState extends State<DetailsPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text('睡眠呼吸檢測數據', style: TextStyle(color: Colors.white)),
+        title: Text('詳細資訊', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
       ),
       body: Center(

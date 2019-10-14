@@ -45,7 +45,7 @@ class HomePageState extends State<HomePage> {
 
     return [
       new charts.Series<RecordData, int>(
-        id: 'Reocrds',
+        id: 'Records',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
         domainFn: (RecordData rec, _) => rec.sec,
         measureFn: (RecordData rec, _) => rec.value,
@@ -251,7 +251,9 @@ class HomePageState extends State<HomePage> {
           children: <Widget>[
             Text(
               '呼吸中止風險值  ' + risk.toString() + '%',
-              style: TextStyle(fontSize: 22.0, color: Colors.blue),
+              style: TextStyle(
+                  fontSize: 22.0,
+                  color: (risk > 80) ? Colors.red : Colors.blue),
             ),
           ],
         ),

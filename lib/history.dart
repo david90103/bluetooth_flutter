@@ -105,6 +105,7 @@ class _HistoryPageState extends State<HistoryPage> {
           count++;
         }
       }
+      eventCount = risk.length.toString();
       ahi = (hour > 0) ? (count ~/ hour).toString() : count.toString();
     });
   }
@@ -134,37 +135,41 @@ class _HistoryPageState extends State<HistoryPage> {
     int minute = (lastSleep['endtime'] - lastSleep['starttime']) % 3600 ~/ 60;
     int second = (lastSleep['endtime'] - lastSleep['starttime']) % 60;
 
-    List breatheList = await database.getLatestBreatheRecord(
+    List breatheList = await database.getBreatheRecordWithRisk(
         lastSleep['starttime'], lastSleep['endtime']);
+
     setState(() {
-      List<RecordData> data = [];
+      Map<String, List<RecordData>> data = {'normal': [], 'danger': []};
+
       for (int i = 0; i < breatheList.length; i++) {
         if (breatheList[i]['value1'] > 0 && breatheList[i]['value9'] > 0) {
-          data.add(new RecordData(i, breatheList[i]['value1']));
-          data.add(new RecordData(i, breatheList[i]['value2']));
-          data.add(new RecordData(i, breatheList[i]['value3']));
-          data.add(new RecordData(i, breatheList[i]['value4']));
-          data.add(new RecordData(i, breatheList[i]['value5']));
-          data.add(new RecordData(i, breatheList[i]['value6']));
-          data.add(new RecordData(i, breatheList[i]['value7']));
-          data.add(new RecordData(i, breatheList[i]['value8']));
-          data.add(new RecordData(i, breatheList[i]['value9']));
-          data.add(new RecordData(i, breatheList[i]['value10']));
-          data.add(new RecordData(i, breatheList[i]['value11']));
-          data.add(new RecordData(i, breatheList[i]['value12']));
-          data.add(new RecordData(i, breatheList[i]['value13']));
-          data.add(new RecordData(i, breatheList[i]['value14']));
-          data.add(new RecordData(i, breatheList[i]['value15']));
-          data.add(new RecordData(i, breatheList[i]['value16']));
+          for (int j = 1; j <= 16; j++) {
+            double value = breatheList[i]['value' + j.toString()];
+            // 檢查risk > 80
+            if (breatheList[i]['value'] > 80) {
+              data['danger'].add(new RecordData(i, value));
+              data['normal'].add(new RecordData(i, null));
+            } else {
+              data['normal'].add(new RecordData(i, value));
+              data['danger'].add(new RecordData(i, null));
+            }
+          }
         }
       }
       var chartdata = [
         new charts.Series<RecordData, int>(
-          id: 'Records',
-          colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+          id: 'Normal',
+          colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
           domainFn: (RecordData rec, _) => rec.sec,
           measureFn: (RecordData rec, _) => rec.value,
-          data: data,
+          data: data['normal'],
+        ),
+        new charts.Series<RecordData, int>(
+          id: 'Danger',
+          colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+          domainFn: (RecordData rec, _) => rec.sec,
+          measureFn: (RecordData rec, _) => rec.value,
+          data: data['danger'],
         )
       ];
       breatheChart['hours'] = hour.toString();
@@ -337,7 +342,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                   TextStyle(fontSize: 20.0, color: Colors.blue),
                             ),
                             Text(
-                              beatsCount + ' 次',
+                              beatsCount + ' BPM',
                               style: TextStyle(
                                   fontSize: 18.0, color: Colors.grey[800]),
                             ),
@@ -423,7 +428,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text('睡眠呼吸檢測數據', style: TextStyle(color: Colors.white)),
+        title: Text('歷史紀錄', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
       ),
       body: body,

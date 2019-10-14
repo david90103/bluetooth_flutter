@@ -152,7 +152,7 @@ class BeatPageState extends State<BeatPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text('睡眠呼吸檢測數據', style: TextStyle(color: Colors.white)),
+        title: Text('心跳數據', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
       ),
       body: body,
