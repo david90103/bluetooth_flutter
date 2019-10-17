@@ -13,6 +13,7 @@ class EventsPage extends StatefulWidget {
 
 class EventsPageState extends State<EventsPage> {
   MonitorDatabase database;
+  int historyTime = 0;
   bool _ready = false;
 
   Map<String, double> dataMap = new Map();
@@ -26,7 +27,6 @@ class EventsPageState extends State<EventsPage> {
   void initState() {
     super.initState();
     database = new MonitorDatabase();
-    _draweventsChart();
   }
 
   @override
@@ -34,12 +34,17 @@ class EventsPageState extends State<EventsPage> {
     super.dispose();
   }
 
-  Future _draweventsChart() async {
+  Future _draweventsChart({time = 0}) async {
     int low = 0;
     int mid = 0;
     int high = 0;
 
-    Map lastSleep = await database.getLatestSleepRecord();
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
     List risk = await database.getRiskRecord(
         lastSleep['starttime'], lastSleep['endtime']);
 
@@ -62,6 +67,10 @@ class EventsPageState extends State<EventsPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (historyTime == 0) {
+      historyTime = ModalRoute.of(context).settings.arguments;
+      _draweventsChart(time: historyTime);
+    }
     Widget row = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(

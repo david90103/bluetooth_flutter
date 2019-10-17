@@ -83,6 +83,13 @@ class MonitorDatabase {
     return sleep.toList()[0];
   }
 
+  Future<Map> getHistorySleepRecord(time) async {
+    await _checkDatabaseInit();
+    var sleep = await database.rawQuery(
+        'SELECT * FROM Sleep WHERE starttime <= $time AND endtime >= $time ORDER BY endtime DESC LIMIT 1;');
+    return sleep.toList()[0];
+  }
+
   Future getLatestOxygenRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var oxygen = await database.rawQuery(

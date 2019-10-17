@@ -19,6 +19,7 @@ class AHIPage extends StatefulWidget {
 
 class AHIPageState extends State<AHIPage> {
   MonitorDatabase database;
+  int historyTime = 0;
   bool _ready = false;
 
   int ahiMin = 999;
@@ -32,7 +33,6 @@ class AHIPageState extends State<AHIPage> {
   void initState() {
     super.initState();
     database = new MonitorDatabase();
-    _drawAHIChart();
   }
 
   @override
@@ -40,8 +40,13 @@ class AHIPageState extends State<AHIPage> {
     super.dispose();
   }
 
-  Future _drawAHIChart() async {
-    Map lastSleep = await database.getLatestSleepRecord();
+  Future _drawAHIChart({time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
     List risk = await database.getRiskRecord(
         lastSleep['starttime'], lastSleep['endtime']);
 
@@ -86,6 +91,10 @@ class AHIPageState extends State<AHIPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (historyTime == 0) {
+      historyTime = ModalRoute.of(context).settings.arguments;
+      _drawAHIChart(time: historyTime);
+    }
     Widget row = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
@@ -121,7 +130,7 @@ class AHIPageState extends State<AHIPage> {
                             child: Container(
                               alignment: Alignment.center,
                               child: Column(children: <Widget>[
-                                Text('最低AHI',
+                                Text('最低風險值',
                                     style: TextStyle(
                                         color: Colors.blue, fontSize: 18)),
                                 Text(ahiMin.round().toString() + ' %',
@@ -135,7 +144,7 @@ class AHIPageState extends State<AHIPage> {
                             child: Container(
                               alignment: Alignment.center,
                               child: Column(children: <Widget>[
-                                Text('最高AHI',
+                                Text('最高風險值',
                                     style: TextStyle(
                                         color: Colors.blue, fontSize: 18)),
                                 Text(ahiMax.round().toString() + ' %',

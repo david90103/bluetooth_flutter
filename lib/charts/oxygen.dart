@@ -14,6 +14,7 @@ class OxygenPage extends StatefulWidget {
 
 class OxygenPageState extends State<OxygenPage> {
   MonitorDatabase database;
+  int historyTime = 0;
   bool _ready = false;
 
   Map oxygenChart = {
@@ -37,8 +38,13 @@ class OxygenPageState extends State<OxygenPage> {
     super.dispose();
   }
 
-  Future _drawOxygenChart() async {
-    Map lastSleep = await database.getLatestSleepRecord();
+  Future _drawOxygenChart({time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
 
     List oxygenList = await database.getOxygenRecord(
         lastSleep['starttime'], lastSleep['endtime']);
@@ -73,6 +79,10 @@ class OxygenPageState extends State<OxygenPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (historyTime == 0) {
+      historyTime = ModalRoute.of(context).settings.arguments;
+      _drawOxygenChart(time: historyTime);
+    }
     Widget row = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(

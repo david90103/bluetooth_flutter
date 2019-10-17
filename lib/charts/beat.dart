@@ -14,6 +14,7 @@ class BeatPage extends StatefulWidget {
 
 class BeatPageState extends State<BeatPage> {
   MonitorDatabase database;
+  int historyTime = 0;
   bool _ready = false;
 
   double beatMin = 999;
@@ -35,8 +36,13 @@ class BeatPageState extends State<BeatPage> {
     super.dispose();
   }
 
-  Future _drawbeatChart() async {
-    Map lastSleep = await database.getLatestSleepRecord();
+  Future _drawbeatChart({time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
 
     List beatList = await database.getBeatsRecord(
         lastSleep['starttime'], lastSleep['endtime']);
@@ -67,6 +73,10 @@ class BeatPageState extends State<BeatPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (historyTime == 0) {
+      historyTime = ModalRoute.of(context).settings.arguments;
+      _drawbeatChart(time: historyTime);
+    }
     Widget row = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(

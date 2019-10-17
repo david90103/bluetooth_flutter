@@ -253,7 +253,7 @@ class HomePageState extends State<HomePage> {
               '呼吸中止風險值  ' + risk.toString() + '%',
               style: TextStyle(
                   fontSize: 22.0,
-                  color: (risk > 80) ? Colors.red : Colors.blue),
+                  color: (risk >= 80) ? Colors.red : Colors.blue),
             ),
           ],
         ),

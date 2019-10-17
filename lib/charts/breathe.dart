@@ -14,6 +14,7 @@ class BreathePage extends StatefulWidget {
 
 class BreathePageState extends State<BreathePage> {
   MonitorDatabase database;
+  int historyTime = 0;
   bool _ready = false;
 
   Map breatheChart = {
@@ -28,7 +29,6 @@ class BreathePageState extends State<BreathePage> {
   void initState() {
     super.initState();
     database = new MonitorDatabase();
-    _drawBreatheChart();
   }
 
   @override
@@ -36,8 +36,13 @@ class BreathePageState extends State<BreathePage> {
     super.dispose();
   }
 
-  Future _drawBreatheChart() async {
-    Map lastSleep = await database.getLatestSleepRecord();
+  Future _drawBreatheChart({time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
 
     int hour = (lastSleep['endtime'] - lastSleep['starttime']) ~/ 3600;
     int minute = (lastSleep['endtime'] - lastSleep['starttime']) % 3600 ~/ 60;
@@ -90,6 +95,10 @@ class BreathePageState extends State<BreathePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (historyTime == 0) {
+      historyTime = ModalRoute.of(context).settings.arguments;
+      _drawBreatheChart(time: historyTime);
+    }
     Widget row = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(

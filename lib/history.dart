@@ -1,5 +1,8 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+import 'package:intl/intl.dart';
 import 'common/database.dart';
 import 'common/RecordData.dart';
 
@@ -14,6 +17,11 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   MonitorDatabase database;
+  int historyTime = 0;
+  String sleepStart = '--';
+  String sleepEnd = '--';
+  String sleepTimeHour = '--';
+  String sleepTimeMinute = '--';
   String ahi = '--';
   String beatsCount = '--';
   String eventCount = '--';
@@ -41,7 +49,9 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
+    historyTime = 0;
     database = new MonitorDatabase();
+    _drawSleepTime();
     _drawOxygenChart();
     _drawBreatheChart();
     _drawBeats();
@@ -54,8 +64,37 @@ class _HistoryPageState extends State<HistoryPage> {
     super.dispose();
   }
 
-  Future _drawOxygenChart() async {
-    Map lastSleep = await database.getLatestSleepRecord();
+  Future _drawSleepTime({int time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
+
+    setState(() {
+      DateTime s =
+          DateTime.fromMillisecondsSinceEpoch(lastSleep['starttime'] * 1000);
+      DateTime e =
+          DateTime.fromMillisecondsSinceEpoch(lastSleep['endtime'] * 1000);
+
+      sleepTimeHour =
+          ((lastSleep['endtime'] - lastSleep['starttime']) ~/ 3600).toString();
+      sleepTimeMinute =
+          ((lastSleep['endtime'] - lastSleep['starttime']) % 3600 ~/ 60)
+              .toString();
+      sleepStart = DateFormat('MM-dd kk:mm').format(s);
+      sleepEnd = DateFormat('MM-dd kk:mm').format(e);
+    });
+  }
+
+  Future _drawOxygenChart({int time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
     List oxygenList = await database.getLatestOxygenRecord(
         lastSleep['starttime'], lastSleep['endtime']);
 
@@ -81,11 +120,16 @@ class _HistoryPageState extends State<HistoryPage> {
     });
   }
 
-  Future _drawEventsChartAndAHI() async {
+  Future _drawEventsChartAndAHI({int time = 0}) async {
     int count = 0;
+    Map lastSleep;
     eventsChart['low'] = eventsChart['mid'] = eventsChart['high'] = 0;
 
-    Map lastSleep = await database.getLatestSleepRecord();
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
     int hour = (lastSleep['endtime'] - lastSleep['starttime']) ~/ 3600;
     List risk = await database.getRiskRecord(
         lastSleep['starttime'], lastSleep['endtime']);
@@ -110,8 +154,13 @@ class _HistoryPageState extends State<HistoryPage> {
     });
   }
 
-  Future _drawBeats() async {
-    Map lastSleep = await database.getLatestSleepRecord();
+  Future _drawBeats({int time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
     List beatsList = await database.getBeatsRecord(
         lastSleep['starttime'], lastSleep['endtime']);
 
@@ -128,8 +177,13 @@ class _HistoryPageState extends State<HistoryPage> {
     });
   }
 
-  Future _drawBreatheChart() async {
-    Map lastSleep = await database.getLatestSleepRecord();
+  Future _drawBreatheChart({int time = 0}) async {
+    Map lastSleep;
+    if (time == 0) {
+      lastSleep = await database.getLatestSleepRecord();
+    } else {
+      lastSleep = await database.getHistorySleepRecord(time);
+    }
 
     int hour = (lastSleep['endtime'] - lastSleep['starttime']) ~/ 3600;
     int minute = (lastSleep['endtime'] - lastSleep['starttime']) % 3600 ~/ 60;
@@ -199,6 +253,44 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget title = Padding(
+      padding: EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: new Material(
+              borderRadius: new BorderRadius.all(Radius.circular(15.0)),
+              color: Colors.white,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+                alignment: Alignment.center,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '🌙',
+                      style: TextStyle(fontSize: 24.0, color: Colors.blue),
+                    ),
+                    Text(
+                      '本次睡眠時間',
+                      style: TextStyle(fontSize: 24.0, color: Colors.blue),
+                    ),
+                    Text(
+                      sleepStart + ' 到 ' + sleepEnd,
+                      style: TextStyle(fontSize: 20.0, color: Colors.grey[800]),
+                    ),
+                    Text(
+                      sleepTimeHour + ' 小時 ' + sleepTimeMinute + ' 分鐘',
+                      style: TextStyle(fontSize: 20.0, color: Colors.grey[800]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
     Widget row1 = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
@@ -209,7 +301,8 @@ class _HistoryPageState extends State<HistoryPage> {
               color: Colors.white,
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/history/oxygen');
+                  Navigator.pushNamed(context, '/history/oxygen',
+                      arguments: historyTime);
                 },
                 child: new Container(
                   padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -261,7 +354,8 @@ class _HistoryPageState extends State<HistoryPage> {
                 color: Colors.white,
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, '/history/events');
+                    Navigator.pushNamed(context, '/history/events',
+                        arguments: historyTime);
                   },
                   child: new Container(
                     padding: EdgeInsets.only(top: 20.0),
@@ -299,7 +393,8 @@ class _HistoryPageState extends State<HistoryPage> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(context, '/history/ahi');
+                        Navigator.pushNamed(context, '/history/ahi',
+                            arguments: historyTime);
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -329,7 +424,8 @@ class _HistoryPageState extends State<HistoryPage> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(context, '/history/beat');
+                        Navigator.pushNamed(context, '/history/beat',
+                            arguments: historyTime);
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -369,7 +465,8 @@ class _HistoryPageState extends State<HistoryPage> {
               color: Colors.white,
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/history/breathe');
+                  Navigator.pushNamed(context, '/history/breathe',
+                      arguments: historyTime);
                 },
                 child: new Container(
                   padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -421,12 +518,34 @@ class _HistoryPageState extends State<HistoryPage> {
         color: Colors.grey[200],
       ),
       child: ListView(
-        children: <Widget>[row1, row2, row3],
+        children: <Widget>[title, row1, row2, row3],
       ),
     );
 
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(FontAwesomeIcons.calendarAlt),
+            onPressed: () {
+              DatePicker.showDatePicker(
+                context,
+                pickerMode: DateTimePickerMode.datetime,
+                initialDateTime: DateTime.now(),
+                dateFormat: 'yyyy-MM-dd HH mm',
+                onConfirm: (datetime, list) {
+                  int t = datetime.millisecondsSinceEpoch ~/ 1000;
+                  historyTime = t;
+                  _drawSleepTime(time: t);
+                  _drawOxygenChart(time: t);
+                  _drawBreatheChart(time: t);
+                  _drawBeats(time: t);
+                  _drawEventsChartAndAHI(time: t);
+                },
+              );
+            },
+          ),
+        ],
         iconTheme: IconThemeData(color: Colors.white),
         title: Text('歷史紀錄', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
