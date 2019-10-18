@@ -50,7 +50,7 @@ class EventsPageState extends State<EventsPage> {
 
     setState(() {
       for (int i = 0; i < risk.length; i++) {
-        if (risk[i]['value'] > 80) {
+        if (risk[i]['value'] >= 80) {
           high++;
         } else if (risk[i]['value'] > 40) {
           mid++;

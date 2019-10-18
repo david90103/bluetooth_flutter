@@ -57,9 +57,11 @@ class HomePageState extends State<HomePage> {
   void _getTime() {
     final DateTime now = DateTime.now();
     final String formattedDateTime = _formatDateTime(now);
-    setState(() {
-      _timeString = formattedDateTime;
-    });
+    if (this.mounted) {
+      setState(() {
+        _timeString = formattedDateTime;
+      });
+    }
   }
 
   void _timer() {
@@ -70,10 +72,11 @@ class HomePageState extends State<HomePage> {
     hour = (hour.length < 2) ? '0' + hour : hour;
     minute = (minute.length < 2) ? '0' + minute : minute;
     second = (second.length < 2) ? '0' + second : second;
-
-    setState(() {
-      _timeString = '$hour:$minute:$second';
-    });
+    if (this.mounted) {
+      setState(() {
+        _timeString = '$hour:$minute:$second';
+      });
+    }
   }
 
   String _formatDateTime(DateTime dateTime) {

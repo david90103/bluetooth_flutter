@@ -136,7 +136,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
     setState(() {
       for (int i = 0; i < risk.length; i++) {
-        if (risk[i]['value'] > 80) {
+        if (risk[i]['value'] >= 80) {
           eventsChart['high']++;
         } else if (risk[i]['value'] > 40) {
           eventsChart['mid']++;
@@ -144,7 +144,7 @@ class _HistoryPageState extends State<HistoryPage> {
           eventsChart['low']++;
         }
         if (i + 1 < risk.length &&
-            risk[i]['value'] > 80 &&
+            risk[i]['value'] >= 80 &&
             risk[i + 1]['value'] < 80) {
           count++;
         }
@@ -200,7 +200,7 @@ class _HistoryPageState extends State<HistoryPage> {
           for (int j = 1; j <= 16; j++) {
             double value = breatheList[i]['value' + j.toString()];
             // 檢查risk > 80
-            if (breatheList[i]['value'] > 80) {
+            if (breatheList[i]['value'] >= 80) {
               data['danger'].add(new RecordData(i, value));
               data['normal'].add(new RecordData(i, null));
             } else {

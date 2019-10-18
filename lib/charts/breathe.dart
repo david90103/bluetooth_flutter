@@ -59,7 +59,7 @@ class BreathePageState extends State<BreathePage> {
           for (int j = 1; j <= 16; j++) {
             double value = breatheList[i]['value' + j.toString()];
             // 檢查risk > 80
-            if (breatheList[i]['value'] > 80) {
+            if (breatheList[i]['value'] >= 80) {
               data['danger'].add(new RecordData(i, value));
               data['normal'].add(new RecordData(i, null));
             } else {

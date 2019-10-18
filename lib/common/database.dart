@@ -1,9 +1,18 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MonitorDatabase {
   Database database;
+  String _user;
 
   Future _checkDatabaseInit() async {
+    //取得用戶資訊
+    var user = await FirebaseAuth.instance.currentUser();
+    if (user != null) {
+      _user = user.email;
+    } else {
+      _user = 'anonymous';
+    }
     if (database == null) await initDatabase();
   }
 
@@ -60,19 +69,19 @@ class MonitorDatabase {
 
     await database.transaction((txn) async {
       int id1 = await txn.rawInsert(
-          'INSERT INTO Beat(user, datetime, value) VALUES("david", $now, ${values[0]})');
+          'INSERT INTO Beat(user, datetime, value) VALUES("$_user", $now, ${values[0]})');
       int id2 = await txn.rawInsert(
-          'INSERT INTO Oxygen(user, datetime, value) VALUES("david", $now, ${values[1]})');
+          'INSERT INTO Oxygen(user, datetime, value) VALUES("$_user", $now, ${values[1]})');
       int id3 = await txn.rawInsert(
           'INSERT INTO Breathe(user, datetime, value1, value2, value3, value4, value5, value6, '
-          'value7, value8, value9, value10, value11, value12, value13, value14, value15, value16) VALUES("david", $now, '
+          'value7, value8, value9, value10, value11, value12, value13, value14, value15, value16) VALUES("$_user", $now, '
           '${values[2]}, ${values[3]}, ${values[4]}, ${values[5]}, ${values[6]}, ${values[7]}, ${values[8]}, '
           '${values[9]}, ${values[10]}, ${values[11]}, ${values[12]}, ${values[13]}, ${values[14]}, ${values[15]}, '
           '${values[16]}, ${values[17]})');
       int id4 = await txn.rawInsert(
-          'INSERT INTO Risk(user, datetime, value) VALUES("david", $now, ${values[18]})');
+          'INSERT INTO Risk(user, datetime, value) VALUES("$_user", $now, ${values[18]})');
 
-      print('record inserted: $id1 $id2 $id3 $id4');
+      print('record inserted: $id1 $id2 $id3 $id4 $_user');
     });
   }
 
@@ -144,7 +153,7 @@ class MonitorDatabase {
     await _checkDatabaseInit();
     await database.transaction((txn) async {
       int id = await txn.rawInsert(
-          'INSERT INTO Sleep(user, starttime, endtime) VALUES("david", $start, $end)');
+          'INSERT INTO Sleep(user, starttime, endtime) VALUES("$_user", $start, $end)');
       print('sleep time inserted: $id');
     });
   }

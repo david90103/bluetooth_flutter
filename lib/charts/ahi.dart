@@ -56,7 +56,7 @@ class AHIPageState extends State<AHIPage> {
 
       for (int i = 0; i < risk.length; i++) {
         if (i + 1 < risk.length &&
-            risk[i]['value'] > 80 &&
+            risk[i]['value'] >= 80 &&
             risk[i + 1]['value'] < 80) {
           //轉換時戳至小時
           int hour =
