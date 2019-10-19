@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 import 'common/database.dart';
 import 'common/RecordData.dart';
@@ -59,6 +63,31 @@ class _HistoryPageState extends State<HistoryPage> {
     _drawEventsChartAndAHI();
   }
 
+  void _checkUpload(int time, String title, param) async {
+    DateTime s = DateTime.fromMillisecondsSinceEpoch(time * 1000);
+    String t = DateFormat('yyyyMMddkkmm').format(s);
+
+    var user = await FirebaseAuth.instance.currentUser();
+    final databaseReference = FirebaseDatabase.instance.reference();
+    await databaseReference
+        .child('records')
+        .child(user.displayName)
+        .child(t)
+        .child(title)
+        .once()
+        .then((DataSnapshot snapshot) async {
+      if (snapshot.value == null) {
+        await databaseReference
+            .child('records')
+            .child(user.displayName)
+            .child(t)
+            .child(title)
+            .set(jsonEncode(param));
+        print('Upload finish $title');
+      }
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -98,6 +127,11 @@ class _HistoryPageState extends State<HistoryPage> {
     List oxygenList = await database.getLatestOxygenRecord(
         lastSleep['starttime'], lastSleep['endtime']);
 
+    //上傳睡眠時間紀錄
+    _checkUpload(lastSleep['starttime'], 'sleep', lastSleep);
+    //上傳血氧紀錄
+    _checkUpload(lastSleep['starttime'], 'oxygen', oxygenList);
+
     setState(() {
       List<RecordData> data = [];
       int sum = 0;
@@ -134,7 +168,11 @@ class _HistoryPageState extends State<HistoryPage> {
     List risk = await database.getRiskRecord(
         lastSleep['starttime'], lastSleep['endtime']);
 
+    //上傳風險值紀錄
+    _checkUpload(lastSleep['starttime'], 'risk', risk);
+
     setState(() {
+      int totalRisks = risk.length;
       for (int i = 0; i < risk.length; i++) {
         if (risk[i]['value'] >= 80) {
           eventsChart['high']++;
@@ -142,6 +180,9 @@ class _HistoryPageState extends State<HistoryPage> {
           eventsChart['mid']++;
         } else if (risk[i]['value'] > 0) {
           eventsChart['low']++;
+        } else {
+          //invalid value
+          totalRisks--;
         }
         if (i + 1 < risk.length &&
             risk[i]['value'] >= 80 &&
@@ -149,7 +190,11 @@ class _HistoryPageState extends State<HistoryPage> {
           count++;
         }
       }
-      eventCount = risk.length.toString();
+      if (totalRisks == 0) {
+        eventCount = '0';
+      } else {
+        eventCount = (eventsChart['high'] / totalRisks * 100 ~/ 1).toString();
+      }
       ahi = (hour > 0) ? (count ~/ hour).toString() : count.toString();
     });
   }
@@ -163,6 +208,9 @@ class _HistoryPageState extends State<HistoryPage> {
     }
     List beatsList = await database.getBeatsRecord(
         lastSleep['starttime'], lastSleep['endtime']);
+
+    //上傳心跳紀錄
+    _checkUpload(lastSleep['starttime'], 'beat', beatsList);
 
     setState(() {
       double sum = 0;
@@ -191,6 +239,9 @@ class _HistoryPageState extends State<HistoryPage> {
 
     List breatheList = await database.getBreatheRecordWithRisk(
         lastSleep['starttime'], lastSleep['endtime']);
+
+    //上傳呼吸紀錄
+    _checkUpload(lastSleep['starttime'], 'breathe', breatheList);
 
     setState(() {
       Map<String, List<RecordData>> data = {'normal': [], 'danger': []};
@@ -367,7 +418,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           style: TextStyle(fontSize: 20.0, color: Colors.blue),
                         ),
                         Text(
-                          '共' + eventCount + '次',
+                          '高風險值 ' + eventCount + '%',
                           style: TextStyle(
                               fontSize: 18.0, color: Colors.grey[800]),
                         ),

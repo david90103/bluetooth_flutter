@@ -87,43 +87,43 @@ class MonitorDatabase {
 
   Future<Map> getLatestSleepRecord() async {
     await _checkDatabaseInit();
-    var sleep = await database
-        .rawQuery('SELECT * FROM Sleep ORDER BY endtime DESC LIMIT 1;');
+    var sleep = await database.rawQuery(
+        'SELECT * FROM Sleep WHERE user = "$_user" ORDER BY endtime DESC LIMIT 1;');
     return sleep.toList()[0];
   }
 
   Future<Map> getHistorySleepRecord(time) async {
     await _checkDatabaseInit();
     var sleep = await database.rawQuery(
-        'SELECT * FROM Sleep WHERE starttime <= $time AND endtime >= $time ORDER BY endtime DESC LIMIT 1;');
+        'SELECT * FROM Sleep WHERE user = "$_user" AND starttime <= $time AND endtime >= $time ORDER BY endtime DESC LIMIT 1;');
     return sleep.toList()[0];
   }
 
   Future getLatestOxygenRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var oxygen = await database.rawQuery(
-        'SELECT value FROM Oxygen WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime DESC LIMIT 400;');
+        'SELECT value FROM Oxygen WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime DESC LIMIT 400;');
     return oxygen.toList();
   }
 
   Future getOxygenRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var oxygen = await database.rawQuery(
-        'SELECT value FROM Oxygen WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+        'SELECT value FROM Oxygen WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return oxygen.toList();
   }
 
   Future getLatestBreatheRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
-        'SELECT * FROM Breathe WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime DESC LIMIT 400;');
+        'SELECT * FROM Breathe WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime DESC LIMIT 400;');
     return breathe.toList();
   }
 
   Future getBreatheRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
-        'SELECT * FROM Breathe WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+        'SELECT * FROM Breathe WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return breathe.toList();
   }
 
@@ -131,21 +131,21 @@ class MonitorDatabase {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
         'SELECT * FROM (Breathe LEFT JOIN Risk ON Breathe.datetime=Risk.datetime) '
-        'WHERE Breathe.datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+        'WHERE Breathe.user = "$_user" AND Breathe.datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return breathe.toList();
   }
 
   Future getBeatsRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
-        'SELECT value FROM Beat WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+        'SELECT value FROM Beat WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return breathe.toList();
   }
 
   Future getRiskRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(
-        'SELECT value, datetime FROM Risk WHERE datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
+        'SELECT value, datetime FROM Risk WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime;');
     return breathe.toList();
   }
 

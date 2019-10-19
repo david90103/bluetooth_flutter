@@ -32,16 +32,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       setState(() {
         state.isLoading = false;
       });
-    } else {
-      await signInWithGoogle();
     }
   }
 
   Future<Null> signInWithGoogle() async {
-    if (googleAccount == null) {
-      // Start the sign-in process:
-      googleAccount = await googleSignIn.signIn();
+    if (googleAccount != null) {
+      await googleSignIn.signOut();
     }
+    // Start the sign-in process:
+    googleAccount = await googleSignIn.signIn();
     FirebaseUser firebaseUser = await signIntoFirebase(googleAccount);
     state.user = firebaseUser; // new user
     setState(() {
