@@ -32,7 +32,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Map oxygenChart = {
     'average': '--',
-    'discription': '睡眠品質不佳 🐣(假資料)',
     'chart': null,
   };
 
@@ -217,6 +216,8 @@ class _HistoryPageState extends State<HistoryPage> {
       int count = 0;
       for (int i = 0; i < beatsList.length; i++) {
         if (beatsList[i]['value'] - 1 > 0) {
+          if (beatsList[i]['value'] > 150) beatsList[i]['value'] = 150;
+          if (beatsList[i]['value'] < 50) beatsList[i]['value'] = 50;
           sum += beatsList[i]['value'];
           count++;
         }
@@ -250,6 +251,8 @@ class _HistoryPageState extends State<HistoryPage> {
         if (breatheList[i]['value1'] > 0 && breatheList[i]['value9'] > 0) {
           for (int j = 1; j <= 16; j++) {
             double value = breatheList[i]['value' + j.toString()];
+            if (value > 500) value = 500;
+            if (value < 50) value = 50;
             // 檢查risk > 80
             if (breatheList[i]['value'] >= 80) {
               data['danger'].add(new RecordData(i, value));
@@ -368,11 +371,6 @@ class _HistoryPageState extends State<HistoryPage> {
                         '平均血氧值 ' + oxygenChart['average'],
                         style:
                             TextStyle(fontSize: 20.0, color: Colors.grey[800]),
-                      ),
-                      Text(
-                        oxygenChart['discription'],
-                        style:
-                            TextStyle(fontSize: 20.0, color: Colors.grey[600]),
                       ),
                       Padding(
                         padding:

@@ -81,12 +81,24 @@ class AHIPageState extends State<AHIPage> {
           colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
           domainFn: (BarChartElement rec, _) => rec.key,
           measureFn: (BarChartElement rec, _) => rec.value,
+          fillColorFn: (BarChartElement rec, _) => _getColor(rec.value),
           data: data,
         )
       ];
       ahiChart['chart'] = charts.BarChart(chartdata, animate: false);
       _ready = true;
     });
+  }
+
+  charts.Color _getColor(value) {
+    if (value > 30)
+      return charts.MaterialPalette.red.shadeDefault;
+    else if (value > 15)
+      return charts.MaterialPalette.deepOrange.shadeDefault;
+    else if (value > 5)
+      return charts.MaterialPalette.yellow.shadeDefault;
+    else
+      return charts.MaterialPalette.green.shadeDefault;
   }
 
   @override

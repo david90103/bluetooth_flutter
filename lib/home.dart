@@ -40,7 +40,10 @@ class HomePageState extends State<HomePage> {
   static List<charts.Series<RecordData, int>> _chartData() {
     List<RecordData> data = [];
     for (int i = 0; i < 480; i++) {
-      data.add(new RecordData(i - 480, breathe[i]));
+      double value = breathe[i];
+      if (value > 500) value = 500;
+      if (value < 50) value = 50;
+      data.add(new RecordData(i - 480, value));
     }
 
     return [
@@ -172,7 +175,6 @@ class HomePageState extends State<HomePage> {
   Future _calculate() async {
     int now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     database.saveTime(startTime, now);
-
     calculating = false;
     //完成後切換到歷史紀錄頁面
     Navigator.pushNamed(context, '/history');

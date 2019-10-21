@@ -83,7 +83,7 @@ class DetailsPageState extends State<DetailsPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text('詳細資訊', style: TextStyle(color: Colors.white)),
+        title: Text('更多資訊', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,
       ),
       body: Center(
@@ -91,10 +91,6 @@ class DetailsPageState extends State<DetailsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            // Padding(
-            //   padding: EdgeInsets.all(30),
-            //   child: Image.asset('assets/ahi_info.png'),
-            // ),
             _buildTable(),
             _divider(Colors.grey[300]),
             Text('聯絡資訊: 臺中榮民總醫院胸腔內科', style: TextStyle(fontSize: 18)),

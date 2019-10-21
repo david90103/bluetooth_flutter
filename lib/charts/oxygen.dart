@@ -19,7 +19,6 @@ class OxygenPageState extends State<OxygenPage> {
 
   Map oxygenChart = {
     'average': '--',
-    'discription': '睡眠品質不佳 🐣(假資料)',
     'chart': null,
   };
 
@@ -105,11 +104,6 @@ class OxygenPageState extends State<OxygenPage> {
                         '平均血氧值 ' + oxygenChart['average'],
                         style:
                             TextStyle(fontSize: 20.0, color: Colors.grey[800]),
-                      ),
-                      Text(
-                        oxygenChart['discription'],
-                        style:
-                            TextStyle(fontSize: 20.0, color: Colors.grey[600]),
                       ),
                       Padding(
                         padding:

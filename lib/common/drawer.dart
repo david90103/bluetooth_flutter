@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bluetooth_app/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../login.dart';
 
 class MainDrawer extends StatefulWidget {
   MainDrawer({Key key}) : super(key: key);
@@ -50,10 +51,11 @@ class MainDrawerState extends State<MainDrawer> {
                     color: Colors.white,
                     icon: Icon(FontAwesomeIcons.signOutAlt),
                     onPressed: () async {
-                      setState(() {
-                        FirebaseAuth.instance.signOut();
-                        _user = null;
-                      });
+                      await FirebaseAuth.instance.signOut();
+                      await LoginPageState.googleSignIn.signOut();
+                      LoginPageState.googleAccount = null;
+                      _user = null;
+                      Navigator.popUntil(context, (route) => route.isFirst);
                     },
                   ),
                 ),
@@ -103,7 +105,7 @@ class MainDrawerState extends State<MainDrawer> {
           ),
           ListTile(
             leading: Icon(Icons.info_outline),
-            title: Text('詳細資訊'),
+            title: Text('更多資訊'),
             onTap: () {
               Navigator.pushNamed(context, '/details');
             },

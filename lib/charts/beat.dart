@@ -52,10 +52,12 @@ class BeatPageState extends State<BeatPage> {
       for (int i = 0; i < beatList.length; i++) {
         value = beatList[i]['value'];
         if (value - 1 > 0) {
+          if (value > 150) value = 150;
+          if (value < 50) value = 50;
           if (beatMin > value) beatMin = value;
           if (beatMax < value) beatMax = value;
         }
-        data.add(new RecordData(i, beatList[i]['value']));
+        data.add(new RecordData(i, value));
       }
       var chartdata = [
         new charts.Series<RecordData, int>(

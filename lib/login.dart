@@ -18,13 +18,13 @@ class StateModel {
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
   @override
-  _LoginPageState createState() => new _LoginPageState();
+  LoginPageState createState() => new LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   StateModel state;
-  GoogleSignInAccount googleAccount;
-  final GoogleSignIn googleSignIn = new GoogleSignIn();
+  static GoogleSignInAccount googleAccount;
+  static final GoogleSignIn googleSignIn = new GoogleSignIn();
 
   Future<Null> initUser() async {
     googleAccount = await getSignedInAccount(googleSignIn);
@@ -32,22 +32,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       setState(() {
         state.isLoading = false;
       });
+    } else {
+      await signInWithGoogle();
     }
   }
 
   Future<Null> signInWithGoogle() async {
-    if (googleAccount != null) {
-      await googleSignIn.signOut();
+    if (googleAccount == null) {
+      // Start the sign-in process:
+      googleAccount = await googleSignIn.signIn();
     }
-    // Start the sign-in process:
-    googleAccount = await googleSignIn.signIn();
     FirebaseUser firebaseUser = await signIntoFirebase(googleAccount);
     state.user = firebaseUser; // new user
     setState(() {
       state.isLoading = false;
       state.user = firebaseUser;
       print(state.user);
-      Navigator.of(context).pushNamed(HomePage.tag, arguments: state.user);
+      Navigator.of(context).pushNamed(HomePage.tag);
     });
   }
 
@@ -91,7 +92,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           children: <Widget>[
             Expanded(
               flex: 8,
-              child: Container(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(width: 80, child: Image.asset('assets/icon.png')),
+                  SizedBox(height: 20),
+                  Text(
+                    '呼吸中止檢測',
+                    style: TextStyle(
+                      fontSize: 36,
+                      color: Colors.blueGrey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               flex: 1,
@@ -109,7 +123,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               child: Card(
                 child: SignInButton(
                   Buttons.GitHub,
-                  text: 'View source code on Github',
+                  text: 'View code on Github',
                   onPressed: () async {
                     const url =
                         'https://github.com/david90103/bluetooth_flutter';

@@ -1,5 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../common/RecordData.dart';
 import '../common/database.dart';
 
@@ -29,11 +30,23 @@ class BreathePageState extends State<BreathePage> {
   void initState() {
     super.initState();
     database = new MonitorDatabase();
+    //vertical mode only
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   @override
   void dispose() {
     super.dispose();
+    //vertical mode only
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   Future _drawBreatheChart({time = 0}) async {
@@ -58,7 +71,9 @@ class BreathePageState extends State<BreathePage> {
         if (breatheList[i]['value1'] > 0 && breatheList[i]['value9'] > 0) {
           for (int j = 1; j <= 16; j++) {
             double value = breatheList[i]['value' + j.toString()];
-            // 檢查risk > 80
+            if (value > 500) value = 500;
+            if (value < 50) value = 50;
+            // 檢查risk > 80 (breatheList[i]['value']為風險值)
             if (breatheList[i]['value'] >= 80) {
               data['danger'].add(new RecordData(i, value));
               data['normal'].add(new RecordData(i, null));
@@ -143,6 +158,28 @@ class BreathePageState extends State<BreathePage> {
                               : Center(child: Text('圖表載入中')),
                         ),
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              padding: EdgeInsets.only(top: 10),
+                              height: 12,
+                              width: 12,
+                              color: Colors.green),
+                          Text('  正常呼吸數據'),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              padding: EdgeInsets.only(top: 10),
+                              height: 12,
+                              width: 12,
+                              color: Colors.red),
+                          Text('  高風險值呼吸數據'),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -158,8 +195,7 @@ class BreathePageState extends State<BreathePage> {
       decoration: BoxDecoration(
         color: Colors.grey[200],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: ListView(
         children: <Widget>[row],
       ),
     );
