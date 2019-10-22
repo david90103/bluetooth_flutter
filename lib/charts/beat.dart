@@ -52,8 +52,8 @@ class BeatPageState extends State<BeatPage> {
       for (int i = 0; i < beatList.length; i++) {
         value = beatList[i]['value'];
         if (value - 1 > 0) {
-          if (value > 150) value = 150;
-          if (value < 50) value = 50;
+          if (value > 140) value = 140;
+          if (value < 60) value = 60;
           if (beatMin > value) beatMin = value;
           if (beatMax < value) beatMax = value;
         }
@@ -68,7 +68,19 @@ class BeatPageState extends State<BeatPage> {
           data: data,
         )
       ];
-      beatChart['chart'] = charts.LineChart(chartdata, animate: false);
+      beatChart['chart'] = charts.LineChart(
+        chartdata,
+        animate: false,
+        primaryMeasureAxis: new charts.NumericAxisSpec(
+          tickProviderSpec: new charts.StaticNumericTickProviderSpec(
+            <charts.TickSpec<num>>[
+              charts.TickSpec<num>(60),
+              charts.TickSpec<num>(100),
+              charts.TickSpec<num>(140),
+            ],
+          ),
+        ),
+      );
       _ready = true;
     });
   }

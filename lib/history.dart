@@ -135,6 +135,7 @@ class _HistoryPageState extends State<HistoryPage> {
       List<RecordData> data = [];
       int sum = 0;
       for (int i = 0; i < oxygenList.length; i++) {
+        if (i > 400) break;
         if (oxygenList[i]['value'] > 0) sum += oxygenList[i]['value'];
         data.add(new RecordData(i, oxygenList[i]['value'].toDouble()));
       }
@@ -216,8 +217,6 @@ class _HistoryPageState extends State<HistoryPage> {
       int count = 0;
       for (int i = 0; i < beatsList.length; i++) {
         if (beatsList[i]['value'] - 1 > 0) {
-          if (beatsList[i]['value'] > 150) beatsList[i]['value'] = 150;
-          if (beatsList[i]['value'] < 50) beatsList[i]['value'] = 50;
           sum += beatsList[i]['value'];
           count++;
         }
@@ -248,6 +247,7 @@ class _HistoryPageState extends State<HistoryPage> {
       Map<String, List<RecordData>> data = {'normal': [], 'danger': []};
 
       for (int i = 0; i < breatheList.length; i++) {
+        if (i > 400) break;
         if (breatheList[i]['value1'] > 0 && breatheList[i]['value9'] > 0) {
           for (int j = 1; j <= 16; j++) {
             double value = breatheList[i]['value' + j.toString()];
@@ -283,7 +283,20 @@ class _HistoryPageState extends State<HistoryPage> {
       breatheChart['hours'] = hour.toString();
       breatheChart['minutes'] = minute.toString();
       breatheChart['seconds'] = second.toString();
-      breatheChart['chart'] = charts.LineChart(chartdata, animate: false);
+      breatheChart['chart'] = charts.LineChart(
+        chartdata,
+        animate: false,
+        primaryMeasureAxis: new charts.NumericAxisSpec(
+          tickProviderSpec: new charts.StaticNumericTickProviderSpec(
+            <charts.TickSpec<num>>[
+              charts.TickSpec<num>(50),
+              charts.TickSpec<num>(200),
+              charts.TickSpec<num>(350),
+              charts.TickSpec<num>(500),
+            ],
+          ),
+        ),
+      );
     });
   }
 
@@ -379,6 +392,11 @@ class _HistoryPageState extends State<HistoryPage> {
                           constraints: BoxConstraints.expand(height: 200.0),
                           child: oxygenChart['chart'],
                         ),
+                      ),
+                      Text(
+                        '點擊查看完整資料',
+                        style:
+                            TextStyle(fontSize: 18.0, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -549,6 +567,11 @@ class _HistoryPageState extends State<HistoryPage> {
                           constraints: BoxConstraints.expand(height: 200.0),
                           child: breatheChart['chart'],
                         ),
+                      ),
+                      Text(
+                        '點擊查看完整資料',
+                        style:
+                            TextStyle(fontSize: 18.0, color: Colors.grey[600]),
                       ),
                     ],
                   ),

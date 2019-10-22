@@ -135,6 +135,13 @@ class MonitorDatabase {
     return breathe.toList();
   }
 
+  Future getLatestBeatsRecord() async {
+    await _checkDatabaseInit();
+    var breathe = await database.rawQuery(
+        'SELECT value FROM Beat WHERE user = "$_user" ORDER BY endtime DESC LIMIT 1;');
+    return breathe.toList()[0];
+  }
+
   Future getBeatsRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var breathe = await database.rawQuery(

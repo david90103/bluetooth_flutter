@@ -8,6 +8,7 @@ class DetailsPage extends StatefulWidget {
 
 class DetailsPageState extends State<DetailsPage> {
   String _version;
+  bool _partytime = false;
 
   final List<TableRow> _table = [
     TableRow(children: [
@@ -91,12 +92,21 @@ class DetailsPageState extends State<DetailsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            _buildTable(),
+            (_partytime)
+                ? Image(image: AssetImage('assets/logo.gif'))
+                : _buildTable(),
             _divider(Colors.grey[300]),
             Text('聯絡資訊: 臺中榮民總醫院胸腔內科', style: TextStyle(fontSize: 18)),
             Text('聯絡電話: 04-2359-2525', style: TextStyle(fontSize: 18)),
             _divider(Colors.grey[300]),
-            Text('🛠\n'),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _partytime = !_partytime;
+                });
+              },
+              child: Text('🛠\n'),
+            ),
             Text('Version ' + _version),
             Text('Author: David Tsai'),
           ],

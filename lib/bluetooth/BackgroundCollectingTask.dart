@@ -46,7 +46,7 @@ class BackgroundCollectingTask extends Model {
         if (index >= 0) {
           try {
             List result = utf8.decode(_buffer).split(',');
-            HomePageState.beat = double.parse(result[0]);
+            HomePageState.beat = _adjustBeat(double.parse(result[0]));
             HomePageState.oxygen = int.parse(result[1]);
 
             for (int i = 0; i < 16; i++) {
@@ -69,6 +69,21 @@ class BackgroundCollectingTask extends Model {
       inProgress = false;
       notifyListeners();
     });
+  }
+
+  double _adjustBeat(beat) {
+    if (beat < 60) beat = 60.0;
+    if (beat > 140) beat = 140.0;
+    //檢查浮動是否過大
+    double prev = HomePageState.beat;
+    if (prev == 0) {
+      return beat;
+    } else if (prev - beat > 10) {
+      return prev - 10;
+    } else if (beat - prev > 10) {
+      return prev + 10;
+    }
+    return beat;
   }
 
   static Future<BackgroundCollectingTask> connect(

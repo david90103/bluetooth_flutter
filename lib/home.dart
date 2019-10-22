@@ -280,7 +280,20 @@ class HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: ConstrainedBox(
                 constraints: BoxConstraints.expand(height: 200.0),
-                child: charts.LineChart(_chartData(), animate: false),
+                child: charts.LineChart(
+                  _chartData(),
+                  animate: false,
+                  primaryMeasureAxis: new charts.NumericAxisSpec(
+                    tickProviderSpec: new charts.StaticNumericTickProviderSpec(
+                      <charts.TickSpec<num>>[
+                        charts.TickSpec<num>(50),
+                        charts.TickSpec<num>(200),
+                        charts.TickSpec<num>(350),
+                        charts.TickSpec<num>(500),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

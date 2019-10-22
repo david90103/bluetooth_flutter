@@ -138,8 +138,29 @@ class AHIPageState extends State<AHIPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          Container(height: 12, width: 12, color: Colors.green),
+                          Text('  0 ~ 5次/hr  '),
+                          Container(
+                              height: 12, width: 12, color: Colors.yellow),
+                          Text('  5 ~ 15次/hr'),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              height: 12, width: 12, color: Colors.orange),
+                          Text('  15 ~ 30次/hr  '),
+                          Container(height: 12, width: 12, color: Colors.red),
+                          Text('  30次/hr以上'),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
                           Expanded(
                             child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 10),
                               alignment: Alignment.center,
                               child: Column(children: <Widget>[
                                 Text('最低風險值',
