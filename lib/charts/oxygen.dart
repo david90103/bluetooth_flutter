@@ -70,7 +70,18 @@ class OxygenPageState extends State<OxygenPage> {
           data: data,
         )
       ];
-      oxygenChart['chart'] = charts.LineChart(chartdata, animate: false);
+      oxygenChart['chart'] = charts.LineChart(
+        chartdata,
+        animate: false,
+        primaryMeasureAxis: new charts.NumericAxisSpec(
+          tickProviderSpec: new charts.StaticNumericTickProviderSpec(
+            <charts.TickSpec<num>>[
+              charts.TickSpec<num>(80),
+              charts.TickSpec<num>(100),
+            ],
+          ),
+        ),
+      );
       oxygenChart['average'] = (sum ~/ data.length).toString();
       _ready = true;
     });

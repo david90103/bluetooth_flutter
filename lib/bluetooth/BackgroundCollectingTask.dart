@@ -47,7 +47,7 @@ class BackgroundCollectingTask extends Model {
           try {
             List result = utf8.decode(_buffer).split(',');
             HomePageState.beat = _adjustBeat(double.parse(result[0]));
-            HomePageState.oxygen = int.parse(result[1]);
+            HomePageState.oxygen = _adjustOxygen(int.parse(result[1]));
 
             for (int i = 0; i < 16; i++) {
               HomePageState.breathe.removeAt(0);
@@ -84,6 +84,29 @@ class BackgroundCollectingTask extends Model {
       return prev + 10;
     }
     return beat;
+  }
+
+  int _adjustOxygen(oxygen) {
+    //檢查感測器是否脫落
+    if (oxygen == 0) {
+      if (HomePageState.dropAlert <= 10) {
+        HomePageState.dropAlert++;
+      }
+    } else {
+      HomePageState.dropAlert = 0;
+    }
+    if (oxygen < 80) oxygen = 80;
+    if (oxygen > 100) oxygen = 100;
+    //檢查浮動是否過大
+    int prev = HomePageState.oxygen;
+    if (prev == 0) {
+      return oxygen;
+    } else if (prev - oxygen > 2) {
+      return prev - 2;
+    } else if (oxygen - prev > 2) {
+      return prev + 2;
+    }
+    return oxygen;
   }
 
   static Future<BackgroundCollectingTask> connect(

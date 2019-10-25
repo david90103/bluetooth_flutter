@@ -34,6 +34,7 @@ class HomePageState extends State<HomePage> {
   static bool recording = false;
   static bool calculating = false;
   static int startTime;
+  static int dropAlert = 0;
 
   static List<double> breathe;
 
@@ -41,8 +42,8 @@ class HomePageState extends State<HomePage> {
     List<RecordData> data = [];
     for (int i = 0; i < 480; i++) {
       double value = breathe[i];
-      if (value > 500) value = 500;
-      if (value < 50) value = 50;
+      if (value > 400) value = 400;
+      if (value < 0) value = 0;
       data.add(new RecordData(i - 480, value));
     }
 
@@ -205,10 +206,14 @@ class HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 20.0, color: Colors.blue),
                   ),
                   SizedBox(height: 5),
-                  Text(
-                    oxygen.toString() + '%',
-                    style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
-                  ),
+                  (dropAlert > 10)
+                      ? Text('感測器脫落',
+                          style: TextStyle(fontSize: 18.0, color: Colors.red))
+                      : Text(
+                          oxygen.toString() + '%',
+                          style: TextStyle(
+                              fontSize: 18.0, color: Colors.grey[800]),
+                        ),
                 ],
               ),
             ),
@@ -231,10 +236,14 @@ class HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 20.0, color: Colors.blue),
                   ),
                   SizedBox(height: 5),
-                  Text(
-                    beat.round().toString() + ' BPM',
-                    style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
-                  ),
+                  (dropAlert > 10)
+                      ? Text('感測器脫落',
+                          style: TextStyle(fontSize: 18.0, color: Colors.red))
+                      : Text(
+                          beat.round().toString() + ' BPM',
+                          style: TextStyle(
+                              fontSize: 18.0, color: Colors.grey[800]),
+                        ),
                 ],
               ),
             ),
@@ -284,15 +293,10 @@ class HomePageState extends State<HomePage> {
                   _chartData(),
                   animate: false,
                   primaryMeasureAxis: new charts.NumericAxisSpec(
-                    tickProviderSpec: new charts.StaticNumericTickProviderSpec(
-                      <charts.TickSpec<num>>[
-                        charts.TickSpec<num>(50),
-                        charts.TickSpec<num>(200),
-                        charts.TickSpec<num>(350),
-                        charts.TickSpec<num>(500),
-                      ],
-                    ),
-                  ),
+                      renderSpec: new charts.NoneRenderSpec()),
+                  domainAxis: new charts.NumericAxisSpec(
+                      showAxisLine: true,
+                      renderSpec: new charts.NoneRenderSpec()),
                 ),
               ),
             ),

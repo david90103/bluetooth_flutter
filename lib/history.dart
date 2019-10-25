@@ -148,7 +148,18 @@ class _HistoryPageState extends State<HistoryPage> {
           data: data,
         )
       ];
-      oxygenChart['chart'] = charts.LineChart(chartdata, animate: false);
+      oxygenChart['chart'] = charts.LineChart(
+        chartdata,
+        animate: false,
+        primaryMeasureAxis: new charts.NumericAxisSpec(
+          tickProviderSpec: new charts.StaticNumericTickProviderSpec(
+            <charts.TickSpec<num>>[
+              charts.TickSpec<num>(80),
+              charts.TickSpec<num>(100),
+            ],
+          ),
+        ),
+      );
       oxygenChart['average'] =
           (data.length > 0) ? (sum ~/ data.length).toString() : '--';
     });
@@ -251,8 +262,8 @@ class _HistoryPageState extends State<HistoryPage> {
         if (breatheList[i]['value1'] > 0 && breatheList[i]['value9'] > 0) {
           for (int j = 1; j <= 16; j++) {
             double value = breatheList[i]['value' + j.toString()];
-            if (value > 500) value = 500;
-            if (value < 50) value = 50;
+            if (value > 400) value = 400;
+            if (value < 0) value = 0;
             // 檢查risk > 80
             if (breatheList[i]['value'] >= 80) {
               data['danger'].add(new RecordData(i, value));
@@ -286,16 +297,10 @@ class _HistoryPageState extends State<HistoryPage> {
       breatheChart['chart'] = charts.LineChart(
         chartdata,
         animate: false,
-        primaryMeasureAxis: new charts.NumericAxisSpec(
-          tickProviderSpec: new charts.StaticNumericTickProviderSpec(
-            <charts.TickSpec<num>>[
-              charts.TickSpec<num>(50),
-              charts.TickSpec<num>(200),
-              charts.TickSpec<num>(350),
-              charts.TickSpec<num>(500),
-            ],
-          ),
-        ),
+        primaryMeasureAxis:
+            new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
+        domainAxis: new charts.NumericAxisSpec(
+            showAxisLine: true, renderSpec: new charts.NoneRenderSpec()),
       );
     });
   }

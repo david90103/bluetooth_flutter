@@ -71,8 +71,8 @@ class BreathePageState extends State<BreathePage> {
         if (breatheList[i]['value1'] > 0 && breatheList[i]['value9'] > 0) {
           for (int j = 1; j <= 16; j++) {
             double value = breatheList[i]['value' + j.toString()];
-            if (value > 500) value = 500;
-            if (value < 50) value = 50;
+            if (value > 400) value = 400;
+            if (value < 0) value = 0;
             // 檢查risk > 80 (breatheList[i]['value']為風險值)
             if (breatheList[i]['value'] >= 80) {
               data['danger'].add(new RecordData(i, value));
@@ -103,14 +103,18 @@ class BreathePageState extends State<BreathePage> {
       breatheChart['hours'] = hour.toString();
       breatheChart['minutes'] = minute.toString();
       breatheChart['seconds'] = second.toString();
-      breatheChart['chart'] = charts.LineChart(chartdata, animate: false);
+      breatheChart['chart'] = charts.LineChart(
+        chartdata,
+        animate: false,
+        behaviors: [new charts.PanAndZoomBehavior()],
+      );
       _ready = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (historyTime == 0) {
+    if (historyTime == 0 && !_ready) {
       historyTime = ModalRoute.of(context).settings.arguments;
       _drawBreatheChart(time: historyTime);
     }
