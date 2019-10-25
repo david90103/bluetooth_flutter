@@ -3,6 +3,7 @@ import 'bluetooth/MainPage.dart' as bluetooth;
 import 'details.dart';
 import 'home.dart';
 import 'login.dart';
+import 'historylist.dart';
 import 'history.dart';
 import 'charts/ahi.dart';
 import 'charts/beat.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
     HomePage.tag: (context) => HomePage(),
     '/bluetooth': (context) => bluetooth.MainPage(),
     '/details': (context) => DetailsPage(),
+    '/historylist': (context) => HistoryListPage(),
     '/history': (context) => HistoryPage(),
     '/history/beat': (context) => BeatPage(),
     '/history/oxygen': (context) => OxygenPage(),

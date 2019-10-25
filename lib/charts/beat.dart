@@ -28,7 +28,6 @@ class BeatPageState extends State<BeatPage> {
   void initState() {
     super.initState();
     database = new MonitorDatabase();
-    _drawbeatChart();
   }
 
   @override

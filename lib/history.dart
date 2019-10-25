@@ -52,14 +52,14 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
-    historyTime = 0;
+    // historyTime = 0;
     database = new MonitorDatabase();
-    _drawSleepTime();
-    _drawOxygenChart();
-    _drawBreatheChart();
-    _drawBeats();
-    //睡眠事件圖表及AHI指數
-    _drawEventsChartAndAHI();
+    // _drawSleepTime();
+    // _drawOxygenChart();
+    // _drawBreatheChart();
+    // _drawBeats();
+    // //睡眠事件圖表及AHI指數
+    // _drawEventsChartAndAHI();
   }
 
   void _checkUpload(int time, String title, param) async {
@@ -136,8 +136,11 @@ class _HistoryPageState extends State<HistoryPage> {
       int sum = 0;
       for (int i = 0; i < oxygenList.length; i++) {
         if (i > 400) break;
-        if (oxygenList[i]['value'] > 0) sum += oxygenList[i]['value'];
-        data.add(new RecordData(i, oxygenList[i]['value'].toDouble()));
+        int value = oxygenList[i]['value'];
+        if (value > 100) value = 100;
+        if (value < 80) value = 80;
+        if (value > 0) sum += value;
+        data.add(new RecordData(i, value.toDouble()));
       }
       var chartdata = [
         new charts.Series<RecordData, int>(
@@ -325,6 +328,15 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (historyTime == 0) {
+      historyTime = ModalRoute.of(context).settings.arguments;
+      _drawSleepTime(time: historyTime);
+      _drawOxygenChart(time: historyTime);
+      _drawBreatheChart(time: historyTime);
+      _drawBeats(time: historyTime);
+      _drawEventsChartAndAHI(time: historyTime);
+    }
+
     Widget title = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
@@ -601,28 +613,28 @@ class _HistoryPageState extends State<HistoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(FontAwesomeIcons.calendarAlt),
-            onPressed: () {
-              DatePicker.showDatePicker(
-                context,
-                pickerMode: DateTimePickerMode.datetime,
-                initialDateTime: DateTime.now(),
-                dateFormat: 'yyyy-MM-dd HH mm',
-                onConfirm: (datetime, list) {
-                  int t = datetime.millisecondsSinceEpoch ~/ 1000;
-                  historyTime = t;
-                  _drawSleepTime(time: t);
-                  _drawOxygenChart(time: t);
-                  _drawBreatheChart(time: t);
-                  _drawBeats(time: t);
-                  _drawEventsChartAndAHI(time: t);
-                },
-              );
-            },
-          ),
-        ],
+        // actions: <Widget>[
+        //   IconButton(
+        //     icon: Icon(FontAwesomeIcons.calendarAlt),
+        //     onPressed: () {
+        //       DatePicker.showDatePicker(
+        //         context,
+        //         pickerMode: DateTimePickerMode.datetime,
+        //         initialDateTime: DateTime.now(),
+        //         dateFormat: 'yyyy-MM-dd HH mm',
+        //         onConfirm: (datetime, list) {
+        //           int t = datetime.millisecondsSinceEpoch ~/ 1000;
+        //           historyTime = t;
+        //           _drawSleepTime(time: t);
+        //           _drawOxygenChart(time: t);
+        //           _drawBreatheChart(time: t);
+        //           _drawBeats(time: t);
+        //           _drawEventsChartAndAHI(time: t);
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ],
         iconTheme: IconThemeData(color: Colors.white),
         title: Text('歷史紀錄', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.orangeAccent,

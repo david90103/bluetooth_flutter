@@ -293,9 +293,16 @@ class HomePageState extends State<HomePage> {
                   _chartData(),
                   animate: false,
                   primaryMeasureAxis: new charts.NumericAxisSpec(
+                      tickProviderSpec:
+                          new charts.StaticNumericTickProviderSpec(
+                        <charts.TickSpec<num>>[
+                          charts.TickSpec<num>(0),
+                          charts.TickSpec<num>(400),
+                        ],
+                      ),
                       renderSpec: new charts.NoneRenderSpec()),
                   domainAxis: new charts.NumericAxisSpec(
-                      showAxisLine: true,
+                      showAxisLine: false,
                       renderSpec: new charts.NoneRenderSpec()),
                 ),
               ),

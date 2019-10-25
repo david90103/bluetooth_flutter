@@ -85,6 +85,13 @@ class MonitorDatabase {
     });
   }
 
+  Future<List> getAllSleepRecord() async {
+    await _checkDatabaseInit();
+    var sleep = await database.rawQuery(
+        'SELECT * FROM Sleep WHERE user = "$_user" ORDER BY endtime DESC;');
+    return sleep.toList();
+  }
+
   Future<Map> getLatestSleepRecord() async {
     await _checkDatabaseInit();
     var sleep = await database.rawQuery(
@@ -102,7 +109,7 @@ class MonitorDatabase {
   Future getLatestOxygenRecord(starttime, endtime) async {
     await _checkDatabaseInit();
     var oxygen = await database.rawQuery(
-        'SELECT value FROM Oxygen WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime DESC LIMIT 400;');
+        'SELECT value FROM Oxygen WHERE user = "$_user" AND datetime BETWEEN $starttime AND $endtime ORDER BY datetime LIMIT 400;');
     return oxygen.toList();
   }
 

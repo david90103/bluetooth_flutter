@@ -29,7 +29,6 @@ class OxygenPageState extends State<OxygenPage> {
   void initState() {
     super.initState();
     database = new MonitorDatabase();
-    _drawOxygenChart();
   }
 
   @override
@@ -54,11 +53,11 @@ class OxygenPageState extends State<OxygenPage> {
       int value;
       for (int i = 0; i < oxygenList.length; i++) {
         value = oxygenList[i]['value'];
-        if (value > 0) {
-          if (oxygenMin > value) oxygenMin = value;
-          if (oxygenMax < value) oxygenMax = value;
-          sum += value;
-        }
+        if (value > 100) value = 100;
+        if (value < 80) value = 80;
+        if (oxygenMin > value) oxygenMin = value;
+        if (oxygenMax < value) oxygenMax = value;
+        sum += value;
         data.add(new RecordData(i, oxygenList[i]['value'].toDouble()));
       }
       var chartdata = [

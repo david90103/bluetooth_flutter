@@ -100,7 +100,7 @@ class MainDrawerState extends State<MainDrawer> {
             leading: Icon(Icons.history),
             title: Text('歷史紀錄'),
             onTap: () {
-              Navigator.pushNamed(context, '/history');
+              Navigator.pushNamed(context, '/historylist');
             },
           ),
           ListTile(
