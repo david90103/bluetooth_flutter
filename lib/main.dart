@@ -10,6 +10,7 @@ import 'charts/beat.dart';
 import 'charts/breathe.dart';
 import 'charts/events.dart';
 import 'charts/oxygen.dart';
+import 'blue.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
     '/history/events': (context) => EventsPage(),
     '/history/ahi': (context) => AHIPage(),
     '/history/breathe': (context) => BreathePage(),
+    '/blue': (context) => BluePage(),
   };
 
   @override
