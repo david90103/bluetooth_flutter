@@ -28,6 +28,7 @@ class HomePageState extends State<HomePage> {
   String _timeString;
   BackgroundCollectingTask _collectingTask;
   MonitorDatabase database;
+  static List<int> buffer = List<int>();
   static double beat = 0;
   static int oxygen = 0;
   static int risk = 0;

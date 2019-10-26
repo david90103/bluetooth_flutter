@@ -97,6 +97,13 @@ class MainDrawerState extends State<MainDrawer> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.link),
+            title: Text('BLE 裝置連接 (Beta)'),
+            onTap: () {
+              Navigator.pushNamed(context, '/blue');
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.history),
             title: Text('歷史紀錄'),
             onTap: () {

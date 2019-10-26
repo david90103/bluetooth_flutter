@@ -109,7 +109,7 @@ class DetailsPageState extends State<DetailsPage> {
               },
               child: Text('🛠\n'),
             ),
-            Text('Version ' + _version),
+            Text('Version ' + _version + '.1'),
             Text('Author: David Tsai'),
           ],
         ),
