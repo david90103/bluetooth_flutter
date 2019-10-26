@@ -40,7 +40,7 @@ class EventsPageState extends State<EventsPage> {
     int high = 0;
 
     Map lastSleep;
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);

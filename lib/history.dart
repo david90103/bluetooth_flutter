@@ -94,7 +94,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future _drawSleepTime({int time = 0}) async {
     Map lastSleep;
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);
@@ -118,7 +118,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future _drawOxygenChart({int time = 0}) async {
     Map lastSleep;
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);
@@ -173,7 +173,7 @@ class _HistoryPageState extends State<HistoryPage> {
     Map lastSleep;
     eventsChart['low'] = eventsChart['mid'] = eventsChart['high'] = 0;
 
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);
@@ -215,7 +215,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future _drawBeats({int time = 0}) async {
     Map lastSleep;
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);
@@ -241,7 +241,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future _drawBreatheChart({int time = 0}) async {
     Map lastSleep;
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);

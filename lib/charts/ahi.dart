@@ -42,7 +42,7 @@ class AHIPageState extends State<AHIPage> {
 
   Future _drawAHIChart({time = 0}) async {
     Map lastSleep;
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);

@@ -37,7 +37,7 @@ class BeatPageState extends State<BeatPage> {
 
   Future _drawbeatChart({time = 0}) async {
     Map lastSleep;
-    if (time == 0) {
+    if (time == 0 || time == null) {
       lastSleep = await database.getLatestSleepRecord();
     } else {
       lastSleep = await database.getHistorySleepRecord(time);
