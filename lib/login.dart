@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:animated_background/animated_background.dart';
+//import 'package:animated_background/animated_background.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -85,10 +85,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: AnimatedBackground(
-        behaviour: BubblesBehaviour(options: BubbleOptions()),
-        vsync: this,
-        child: Column(
+      body: Column(
           children: <Widget>[
             Expanded(
               flex: 8,
@@ -113,7 +110,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 child: SignInButton(
                   Buttons.Google,
                   onPressed: () {
-                    signInWithGoogle();
+                    Navigator.of(context).pushNamed(HomePage.tag);
                   },
                 ),
               ),
@@ -142,7 +139,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             ),
           ],
         ),
-      ),
     );
   }
 }

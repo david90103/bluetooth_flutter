@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get_version/get_version.dart';
+//import 'package:get_version/get_version.dart';
 
 class DetailsPage extends StatefulWidget {
   @override
@@ -7,8 +7,9 @@ class DetailsPage extends StatefulWidget {
 }
 
 class DetailsPageState extends State<DetailsPage> {
-  String _version;
+
   bool _partytime = false;
+  String _version='0.0.12';
 
   final List<TableRow> _table = [
     TableRow(children: [
@@ -25,15 +26,15 @@ class DetailsPageState extends State<DetailsPage> {
   @override
   void initState() {
     super.initState();
-    _getVersion();
+//    _getVersion();
   }
 
-  void _getVersion() async {
-    String version = await GetVersion.projectVersion;
-    setState(() {
-      _version = version;
-    });
-  }
+//  void _getVersion() async {
+//    String version = await GetVersion.projectVersion;
+//    setState(() {
+//      _version = version;
+//    });
+//  }
 
   Widget _buildTable() {
     return Card(
