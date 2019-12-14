@@ -82,7 +82,8 @@ class FindDevicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Find Devices'),
+        title: Text('BLE裝置連接'),
+        backgroundColor: Colors.orangeAccent,
       ),
       body: RefreshIndicator(
         onRefresh: () =>
@@ -107,7 +108,10 @@ class FindDevicesScreen extends StatelessWidget {
                                     if (snapshot.data ==
                                         BluetoothDeviceState.connected) {
                                       return RaisedButton(
-                                        child: Text('OPEN'),
+                                        child: Text('CONNECT',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                        color: Colors.orange,
                                         onPressed: () => Navigator.of(context)
                                             .push(MaterialPageRoute(
                                                 builder: (context) =>
@@ -156,6 +160,7 @@ class FindDevicesScreen extends StatelessWidget {
           } else {
             return FloatingActionButton(
                 child: Icon(Icons.search),
+                backgroundColor: Colors.orange,
                 onPressed: () => FlutterBlue.instance
                     .startScan(timeout: Duration(seconds: 4)));
           }
@@ -181,6 +186,8 @@ class DeviceScreenState extends State<DeviceScreen> {
   void initState() {
     super.initState();
     database = new MonitorDatabase();
+    //自動檢查裝置Services
+    widget.device.discoverServices();
   }
 
   List<int> _getRandomBytes() {
@@ -194,6 +201,13 @@ class DeviceScreenState extends State<DeviceScreen> {
   }
 
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
+    if (services != null && services.length > 0) {
+      //自動開始監聽Service FFE0
+      BluetoothCharacteristic characteristic =
+          services[services.length - 1].characteristics[0];
+      characteristic.setNotifyValue(!characteristic.isNotifying);
+      characteristic.value.listen(_onData);
+    }
     return services
         .map(
           (s) => ServiceTile(
@@ -205,42 +219,7 @@ class DeviceScreenState extends State<DeviceScreen> {
                             onReadPressed: () => c.read(),
                             onWritePressed: () => c.write(_getRandomBytes()),
                             onNotificationPressed: () {
-                              c.setNotifyValue(!c.isNotifying);
-                              c.value.listen((value) {
-                                HomePageState.buffer += value;
-
-                                while (true) {
-                                  int index = HomePageState.buffer
-                                      .indexOf('\n'.codeUnitAt(0));
-                                  if (index >= 0) {
-                                    try {
-                                      List result = utf8
-                                          .decode(HomePageState.buffer)
-                                          .split(',');
-                                      HomePageState.beat =
-                                          _adjustBeat(double.parse(result[0]));
-                                      HomePageState.oxygen =
-                                          _adjustOxygen(int.parse(result[1]));
-
-                                      for (int i = 0; i < 16; i++) {
-                                        HomePageState.breathe.removeAt(0);
-                                        HomePageState.breathe
-                                            .add(double.parse(result[2 + i]));
-                                      }
-
-                                      HomePageState.risk =
-                                          int.parse(result[18]);
-                                      if (HomePageState.recording)
-                                        database.saveRecord(result);
-                                    } catch (e) {
-                                      print(e);
-                                    }
-                                    HomePageState.buffer.clear();
-                                  } else {
-                                    break;
-                                  }
-                                }
-                              });
+                              print('onNotificationPressed');
                             },
                             descriptorTiles: c.descriptors
                                 .map(
@@ -258,6 +237,35 @@ class DeviceScreenState extends State<DeviceScreen> {
               ),
         )
         .toList();
+  }
+
+  void _onData(value) {
+    HomePageState.buffer += value;
+
+    while (true) {
+      int index = HomePageState.buffer.indexOf('\n'.codeUnitAt(0));
+      if (index >= 0) {
+        try {
+          List result = utf8.decode(HomePageState.buffer).split(',');
+          print(result);
+          HomePageState.beat = _adjustBeat(double.parse(result[0]));
+          HomePageState.oxygen = _adjustOxygen(int.parse(result[1]));
+
+          for (int i = 0; i < 16; i++) {
+            HomePageState.breathe.removeAt(0);
+            HomePageState.breathe.add(double.parse(result[2 + i]));
+          }
+
+          HomePageState.risk = int.parse(result[18]);
+          if (HomePageState.recording) database.saveRecord(result);
+        } catch (e) {
+          print(e);
+        }
+        HomePageState.buffer.clear();
+      } else {
+        break;
+      }
+    }
   }
 
   double _adjustBeat(beat) {
@@ -303,6 +311,7 @@ class DeviceScreenState extends State<DeviceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.device.name),
+        backgroundColor: Colors.orangeAccent,
         actions: <Widget>[
           StreamBuilder<BluetoothDeviceState>(
             stream: widget.device.state,

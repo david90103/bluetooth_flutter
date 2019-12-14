@@ -7,9 +7,8 @@ class DetailsPage extends StatefulWidget {
 }
 
 class DetailsPageState extends State<DetailsPage> {
-
   bool _partytime = false;
-  String _version='0.0.12';
+  String _version = '0.1.0';
 
   final List<TableRow> _table = [
     TableRow(children: [
@@ -97,9 +96,11 @@ class DetailsPageState extends State<DetailsPage> {
                 ? Image(image: AssetImage('assets/logo.gif'))
                 : _buildTable(),
             _divider(Colors.grey[300]),
-            Text('參賽編號 10065', style: TextStyle(fontSize: 24)),
-            Text('聯絡資訊: XX醫院胸腔內科', style: TextStyle(fontSize: 18)),
-            Text('聯絡電話: XX-XXXX-XXXX', style: TextStyle(fontSize: 18)),
+            // Text('參賽編號 10065', style: TextStyle(fontSize: 24)),
+            // Text('聯絡資訊: XX醫院胸腔內科', style: TextStyle(fontSize: 18)),
+            // Text('聯絡電話: XX-XXXX-XXXX', style: TextStyle(fontSize: 18)),
+            Text('聯絡資訊: 臺中榮民總醫院胸腔內科', style: TextStyle(fontSize: 18)),
+            Text('聯絡電話: 04-2359-2525', style: TextStyle(fontSize: 18)),
             _divider(Colors.grey[300]),
             GestureDetector(
               onTap: () {

@@ -22,7 +22,7 @@ class BreathePageState extends State<BreathePage> {
     'hours': '--',
     'minutes': '--',
     'seconds': '--',
-    'compare': '比平均 -- -- 分鐘(假資料)',
+    // 'compare': '比平均 -- -- 分鐘(假資料)',
     'chart': null,
   };
 
@@ -147,11 +147,11 @@ class BreathePageState extends State<BreathePage> {
                         style:
                             TextStyle(fontSize: 20.0, color: Colors.grey[800]),
                       ),
-                      Text(
-                        breatheChart['compare'],
-                        style:
-                            TextStyle(fontSize: 20.0, color: Colors.grey[600]),
-                      ),
+                      // Text(
+                      //   breatheChart['compare'],
+                      //   style:
+                      //       TextStyle(fontSize: 20.0, color: Colors.grey[600]),
+                      // ),
                       Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),

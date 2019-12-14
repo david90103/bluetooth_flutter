@@ -79,7 +79,7 @@ class AHIPageState extends State<AHIPage> {
         new charts.Series<BarChartElement, String>(
           id: 'Records',
           colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-          domainFn: (BarChartElement rec, _) => rec.key,
+          domainFn: (BarChartElement rec, _) => rec.key + ':00',
           measureFn: (BarChartElement rec, _) => rec.value,
           fillColorFn: (BarChartElement rec, _) => _getColor(rec.value),
           data: data,
