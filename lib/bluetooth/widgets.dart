@@ -12,6 +12,7 @@ class ScanResultTile extends StatelessWidget {
   final VoidCallback onTap;
 
   Widget _buildTitle(BuildContext context) {
+    result.device.discoverServices();
     if (result.device.name.length > 0) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -90,10 +91,9 @@ class ScanResultTile extends StatelessWidget {
     return ExpansionTile(
       title: _buildTitle(context),
       leading: Text(result.rssi.toString()),
-      trailing: RaisedButton(
+      trailing: FlatButton(
         child: Text('CONNECT'),
-        color: Colors.black,
-        textColor: Colors.white,
+        textColor: Colors.orange,
         onPressed: (result.advertisementData.connectable) ? onTap : null,
       ),
       children: <Widget>[
